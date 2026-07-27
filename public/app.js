@@ -1376,6 +1376,33 @@ $("reset").onclick = () => {
 
 /* boot */
 (async () => {
+  // URL Query Param auto-resume check (e.g. ?user=Rahul or ?candidate=Rahul)
+  const urlParams = new URLSearchParams(window.location.search);
+  const userParam = urlParams.get("user") || urlParams.get("candidate") || urlParams.get("name");
+
+  if (userParam && (!state.userRegistration || state.name.toLowerCase() !== userParam.toLowerCase())) {
+    try {
+      const res = await fetch("/api/results");
+      const results = await res.json();
+      const existing = results.find(u => u.name && u.name.toLowerCase() === userParam.toLowerCase());
+      if (existing) {
+        state.name = existing.name;
+        state.userRegistration = {
+          name: existing.name,
+          gender: existing.gender || "Male",
+          age: existing.age || "25",
+          location: existing.location || "Default",
+          lang: existing.choices?.lang || state.lang || "Hinglish"
+        };
+        if (existing.stepIndex !== undefined) state.stepIndex = existing.stepIndex;
+        if (existing.score !== undefined) state.score = existing.score;
+        save();
+      }
+    } catch (e) {
+      console.log("Could not auto-resume from URL param", e);
+    }
+  }
+
   // Onboarding registration check
   if (!state.userRegistration) {
     $("registrationModal").style.display = "flex";
