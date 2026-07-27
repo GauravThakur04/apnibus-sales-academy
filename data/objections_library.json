@@ -1,0 +1,304 @@
+{
+  "objections": {
+    "greeting_rush": {
+      "category": "Greeting",
+      "en": "**Rajesh Yadav:** Namaste! Yes, tell me. Make it quick, the bus is leaving. 🚌\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** नमस्ते! हाँ भाई बोलो। जल्दी बोलना, बस निकलने वाली है। 🚌\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Namaste! Haan bhaiya bolo, jaldi bolna bus nikalne wali hai. 🚌\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "greeting_cold": {
+      "category": "Greeting",
+      "en": "**Rajesh Yadav:** Salesman again? Look, I don't have time today. Come later. ✋\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** फिर से सेल्समैन? देखो, आज मेरे पास टाइम नहीं है। बाद में आना। ✋\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Phir se salesman? Dekho, aaj mere paas time nahi hai. Baad mein aana. ✋\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "greeting_busy": {
+      "category": "Greeting",
+      "en": "**Rajesh Yadav:** I am checking today's register accounts. Speak in one line, what do you want? 📝\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** मैं आज के रजिस्टर का हिसाब मिला रहा हूँ। एक लाइन में बोलो क्या चाहिए? 📝\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Main aaj ka register hisaab mila raha hoon. Ek line mein bolo kya chahiye? 📝\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "need_register": {
+      "category": "Need Discovery",
+      "en": "**Rajesh Yadav:** My work is running fine with manual registers for 12 years. Why should I make a new expense? 🤨\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** मेरा काम तो १२ साल से रजिस्टर से ठीक चल रहा है। नया खर्चा क्यों करूँ? 🤨\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Mera kaam toh 12 saal se register se theek chal raha hai. Naya kharcha kyun karun? 🤨\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "need_cashbox": {
+      "category": "Need Discovery",
+      "en": "**Rajesh Yadav:** Conductor brings the cashbox every evening and hands over money. Why do I need an app? 📦\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** कंडक्टर रोज़ शाम को कैशबॉक्स लाकर पैसे दे देता है। मुझे ऐप की क्या ज़रूरत? 📦\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Conductor roz shaam ko cashbox laakar paise de deta hai. Mujhe app ki kya zaroorat? 📦\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "need_small_fleet": {
+      "category": "Need Discovery",
+      "en": "**Rajesh Yadav:** I only run 4 buses. Big ticketing systems are for government buses, not small operators like me. 🚌\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** मेरी सिर्फ ४ बसें हैं। बड़े टिकटिंग सिस्टम सरकारी बसों के लिए होते हैं, छोटे ऑपरेटर के लिए नहीं। 🚌\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Meri sirf 4 buses hain. Bade ticketing system sarkari bus ke liye hote hain, chhote operator ke liye nahi. 🚌\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "manual_tickets": {
+      "category": "Manual Ticketing",
+      "en": "**Rajesh Yadav:** Paper ticket books cost peanuts. Why buy expensive machine hardware? 📄\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** कागज की टिकट कॉपी बहुत सस्ती मिलती है। महँगी मशीन क्यों खरीदूँ? 📄\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Kaagaz ki ticket book sasti milti hai. Mehngi machine kyun khareedun? 📄\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "manual_accustomed": {
+      "category": "Manual Ticketing",
+      "en": "**Rajesh Yadav:** My passengers and conductors are used to paper tickets. Change causes confusion. 🎟️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** मेरे सवारी और कंडक्टर कागज के टिकट के आदी हैं। बदलाव से कन्फ्यूजन होगा। 🎟️\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Mere passengers aur conductor kaagaz ke ticket ke aadi hain. Badalna mushkil hoga. 🎟️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "leakage_proof": {
+      "category": "Cash Leakage",
+      "en": "**Rajesh Yadav:** You talk about conductor cash leakage... do you have any proof that my conductors steal money? 🔑\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** तुम कंडक्टर चोरी की बात कर रहे हो... क्या तुम्हारे पास कोई सबूत है कि मेरा कंडक्टर पैसा मार रहा है? 🔑\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Tum conductor chori ki baat kar rahe ho... kya tumhare paas koi proof hai ki mera conductor paisa maar raha hai? 🔑\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "leakage_doubt": {
+      "category": "Cash Leakage",
+      "en": "**Rajesh Yadav:** What if the conductor doesn't issue a ticket from the machine at all? How will your app show that? 🤔\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** अगर कंडक्टर मशीन से टिकट निकाले ही नहीं, तो तुम्हारी ऐप में कैसे दिखेगा? 🤔\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Agar conductor machine se ticket nikale hi nahi, toh tumhari app mein kaise dikhega? 🤔\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "leakage_trust_conductor": {
+      "category": "Cash Leakage",
+      "en": "**Rajesh Yadav:** My conductor Ramesh has been working with me for 8 years. He is honest like family! 🤝\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** मेरा कंडक्टर रमेश ८ साल से मेरे साथ है। वह परिवार जैसा ईमानदार है! 🤝\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Mera conductor Ramesh 8 saal se mere sath hai. Wo parivar jaisa imandar hai! 🤝\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "app_missing": {
+      "category": "Business App",
+      "en": "**Rajesh Yadav:** What do I get on my phone? Is it just ticket details or full daily collection accounts? 📱\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** मेरे फ़ोन पर क्या मिलेगा? सिर्फ टिकट दिखेगा या रोज़ का पूरा कलेक्शन हिसाब? 📱\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Mere phone pe kya milega? Sirf ticket dikhega ya roz ka poora collection hisaab? 📱\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "app_cost": {
+      "category": "Business App",
+      "en": "**Rajesh Yadav:** Is there any monthly subscription or separate fee for this Business App? 💳\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** क्या इस बिजनेस ऐप का अलग से कोई मंथली चार्ज या सब्सक्रिप्शन फीस है? 💳\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Kya is Business App ka alag se koi monthly charge ya subscription fee hai? 💳\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "app_live": {
+      "category": "Business App",
+      "en": "**Rajesh Yadav:** Can I see live collection sitting at home while my bus is running on Ludhiana route? 🛋️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** क्या मैं घर बैठकर लुधियाना रूट पर चल रही बस का लाइव कलेक्शन देख सकता हूँ? 🛋️\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Kya main ghar baithe Ludhiana route par chal rahi bus ka live collection dekh sakta hoon? 🛋️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "app_free": {
+      "category": "Business App",
+      "en": "**Rajesh Yadav:** You say the app is free, but will you charge subscription after 3 months? 🧐\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** तुम कह रहे हो ऐप फ्री है, लेकिन क्या ३ महीने बाद सब्सक्रिप्शन चार्ज लोगे? 🧐\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Tum keh rahe ho app free hai, lekin kya 3 mahine baad subscription charge loge? 🧐\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "app_multiple_buses": {
+      "category": "Business App",
+      "en": "**Rajesh Yadav:** Can I see all 4 of my buses together in one screen on the app? 🚍\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** क्या मैं अपनी चारों बसें एक साथ ऐप की एक ही स्क्रीन पर देख सकता हूँ? 🚍\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Kya main apni charo buses ek sath app ki ek hi screen par dekh sakta hoon? 🚍\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "commando_operator": {
+      "category": "Commando App",
+      "en": "**Rajesh Yadav:** Do I also need to install this Commando App on my phone? 📲\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** क्या मुझे भी अपने फ़ोन में यह कमांडो ऐप डाउनलोड करनी पड़ेगी? 📲\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Kya mujhe bhi apne phone mein ye Commando App download karni padegi? 📲\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "commando_lead": {
+      "category": "Commando App",
+      "en": "**Rajesh Yadav:** What is the Commando App used for if I already use the Business App? 👥\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** अगर मैं बिजनेस ऐप यूज़ कर रहा हूँ तो कमांडो ऐप किस काम आती है? 👥\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Agar main Business App use kar raha hoon toh Commando App kis kaam aati hai? 👥\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "commando_replacement": {
+      "category": "Commando App",
+      "en": "**Rajesh Yadav:** Can your executive request a POS machine replacement directly from his Commando phone app? 🔄\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** क्या आपका एग्जीक्यूटिव अपने कमांडो ऐप से सीधे POS रिप्लेसमेंट रिक्वेस्ट डाल सकता है? 🔄\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Kya aapka executive apne Commando app se sidas POS replacement request daal sakta hai? 🔄\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "price_expensive": {
+      "category": "Price",
+      "en": "**Rajesh Yadav:** How much does it cost? ... That sounds too expensive, brother! 💸\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** इसका कितना खर्चा है? ... अरे भाई, यह तो बहुत महँगा है! 💸\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Iska kitna kharcha hai? ... Arre bhai, ye toh bahut mehnga hai! 💸\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "price_emi": {
+      "category": "Price",
+      "en": "**Rajesh Yadav:** Can I pay the machine cost in easy monthly instalments or EMI? 🏦\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** क्या मैं मशीन का खर्चा आसान किस्तों या EMI में दे सकता हूँ? 🏦\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Kya main machine ka kharcha aasan kiston ya EMI mein de sakta hoon? 🏦\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "price_roi": {
+      "category": "ROI",
+      "en": "**Rajesh Yadav:** How many months will it take for this machine to recover its own cost? ⏳\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** यह मशीन कितने महीनों में अपना खर्चा खुद वापस निकाल लेगी? ⏳\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Ye machine kitne mahino mein apna kharcha khud wapas nikaal legi? ⏳\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "price_upfront": {
+      "category": "Price",
+      "en": "**Rajesh Yadav:** I don't want to pay any security deposit upfront. Can you give it on trial? 🆓\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** मैं कोई सिक्योरिटी डिपॉजिट एडवांस नहीं दूंगा। क्या ट्रायल पर दे सकते हो? 🆓\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Main koi security deposit advance nahi doonga. Kya trial par de sakte ho? 🆓\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "competition_button": {
+      "category": "Competition",
+      "en": "**Rajesh Yadav:** I already have a cheap button ticketing machine. Why should I switch to ApniBus? 🔲\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** मेरे पास पहले से सस्ती बटन वाली मशीन है। मैं ApniBus क्यों लूँ? 🔲\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Mere paas pehle se sasti button wali machine hai. Main ApniBus kyun loon? 🔲\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "competition_other": {
+      "category": "Competition",
+      "en": "**Rajesh Yadav:** Another company is offering machines for Rs 500. Why is your machine priced higher? 🏷️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** दूसरी कंपनी ५०० रुपये में मशीन दे रही है। आपकी मशीन महँगी क्यों है? 🏷️\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Dusri company 500 rupaye mein machine de rahi hai. Aapki machine mehngi kyun hai? 🏷️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "competition_paper": {
+      "category": "Competition",
+      "en": "**Rajesh Yadav:** Local vendor provides pre-printed tickets on credit. Why change my supplier? 📦\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** लोकल वेंडर मुझे उधार पर छपे हुए टिकट दे देता है। मैं सप्लायर क्यों बदलूँ? 📦\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Local vendor udhaar par chhape ticket de deta hai. Main supplier kyun badlun? 📦\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "network_signal": {
+      "category": "Network",
+      "en": "**Rajesh Yadav:** If the bus goes into a low network zone, will ticket printing stop? 🌐\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** अगर बस कम नेटवर्क वाले इलाके में गई, तो क्या टिकट प्रिंट होना बंद हो जाएगा? 🌐\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Agar bus kam network wale ilake mein gayi, toh kya ticket print hona band ho jayega? 🌐\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "network_data": {
+      "category": "Network",
+      "en": "**Rajesh Yadav:** Which SIM card is inside the machine and who pays for monthly data recharge? 📶\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** मशीन में कौन सी कंपनी का SIM लगेगा और मंथली रिचार्ज का खर्चा कौन देगा? 📶\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Machine mein kaunsi company ka SIM lagega aur monthly recharge ka kharcha kaun dega? 📶\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "network_sync": {
+      "category": "Offline Mode",
+      "en": "**Rajesh Yadav:** If tickets are issued offline, when will the data upload to my Business App? 🔄\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** अगर ऑफलाइन टिकट कटे, तो मेरी बिजनेस ऐप पर डेटा कब अपलोड होगा? 🔄\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Agar offline ticket kate, toh meri Business App par data kab upload hoga? 🔄\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "printer_paper": {
+      "category": "Printer",
+      "en": "**Rajesh Yadav:** Do I have to buy thermal paper rolls separately? Is ticket printing fast? 🖨️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** क्या थर्मल पेपर रोल अलग से खरीदने पड़ेंगे? टिकट जल्दी प्रिंट होता है? 🖨️\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Kya thermal paper roll alag se khareedne padenge? Ticket jaldi print hota hai? 🖨️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "printer_durable": {
+      "category": "Hardware",
+      "en": "**Rajesh Yadav:** Conductor drops things constantly. What if it falls from the bus door? Will it break? 🔨\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** कंडक्टर के हाथ से चीज़ें गिरती रहती हैं। अगर बस के दरवाजे से नीचे गिर गई तो टूट जाएगी? 🔨\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Conductor ke haath se cheezein girti rehti hain. Agar bus ke darwaze se niche gir gayi toh toot jayegi? 🔨\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "printer_speed": {
+      "category": "Printer",
+      "en": "**Rajesh Yadav:** In peak rush, conductor has to issue 50 tickets in 5 minutes. Can this machine match that speed? ⚡\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** भीड़ के समय कंडक्टर को ५ मिनट में ५० टिकट काटने होते हैं। क्या यह मशीन इतनी तेज़ चल पाएगी? ⚡\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Bheed ke samay conductor ko 5 minute mein 50 ticket kaatne hote hain. Kya ye machine itni tez chal payegi? ⚡\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "battery_life": {
+      "category": "Battery",
+      "en": "**Rajesh Yadav:** My bus runs 16 hours a day. Will the battery last full day without charging? 🔋\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** मेरी बस १६ घंटे चलती है। क्या बैटरी बिना चार्जिंग के पूरा दिन चलेगी? 🔋\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Meri bus 16 ghante chalti hai. Kya battery bina charging ke poora din chalegi? 🔋\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "battery_charging": {
+      "category": "Battery",
+      "en": "**Rajesh Yadav:** Can it be charged using a normal mobile power bank inside the bus? 🔌\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** क्या इसे बस के अंदर नॉर्मल मोबाइल पावर बैंक से चार्ज किया जा सकता है? 🔌\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Kya ise bus ke andar normal mobile power bank se charge kiya ja sakta hai? 🔌\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "battery_replacement": {
+      "category": "Battery",
+      "en": "**Rajesh Yadav:** What if the battery degrades after 1 year? Will you replace the battery for free? 🪫\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** अगर १ साल बाद बैटरी ख़राब हो गई तो क्या फ्री में बदलकर दोगे? 🪫\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Agar 1 saal baad battery kharab ho gayi toh kya free mein badal kar doge? 🪫\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "support_247": {
+      "category": "Support",
+      "en": "**Rajesh Yadav:** What if the machine breaks down on a trip? Who will repair it quickly? 🔧\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** अगर ट्रिप के बीच मशीन ख़राब हो गई तो? कौन तुरंत ठीक करेगा? 🔧\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Agar trip ke beech machine kharab ho gayi toh? Kaun repair karega? Support milega? 🔧\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "support_replacement": {
+      "category": "Replacement",
+      "en": "**Rajesh Yadav:** If a machine needs replacement, how many days will it take? How do we issue tickets until then? 🔄\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** अगर मशीन बदलनी पड़ी तो कितने दिन लगेंगे? तब तक टिकट कैसे कटेगा? 🔄\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Agar machine badalni padi toh kitne din lagenge? Tab tak ticket kaise katega? 🔄\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "warranty_period": {
+      "category": "Warranty",
+      "en": "**Rajesh Yadav:** How many years of full hardware warranty do you provide on this POS device? 🛡️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** इस POS डिवाइस पर आप कितने साल की फुल हार्डवेयर वारंटी दे रहे हैं? 🛡️\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Is POS device par aap kitne saal ki full hardware warranty de rahe hain? 🛡️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "conductor_literacy": {
+      "category": "Conductor",
+      "en": "**Rajesh Yadav:** My conductor is not educated. He won't be able to manage a touch-screen machine. 🤷‍♂️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** मेरा कंडक्टर पढ़ा-लिखा नहीं है। वह मशीन नहीं चला पाएगा। 🤷‍♂️\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Mera conductor padha-likha nahi hai. Naye zamane ki machine nahi chala payega. 🤷‍♂️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "conductor_stubborn": {
+      "category": "Conductor",
+      "en": "**Rajesh Yadav:** My conductor refuses to use new machines and says manual paper tickets are faster. 🗣️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** मेरा कंडक्टर नई मशीन यूज़ करने से मना करता है, कहता है हाथ का टिकट तेज़ बनता है। 🗣️\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Mera conductor nayi machine use karne se mana karta hai, kehta hai haath ka ticket tez banta hai. 🗣️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "training_free": {
+      "category": "Training",
+      "en": "**Rajesh Yadav:** Will you charge extra fees to train my conductor or is training free? 🎓\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** क्या कंडक्टर को ट्रेनिंग देने की अलग से फीस लोगे या फ्री ट्रेनिंग मिलेगी? 🎓\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Kya conductor ko training dene ki alag se fee loge ya free training milegi? 🎓\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "gst_invoice": {
+      "category": "GST",
+      "en": "**Rajesh Yadav:** Will I get a proper GST invoice for this machine purchase for my business accounts? 🧾\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** क्या मुझे इस मशीन की खरीद का पक्का GST बिल मिलेगा? 🧾\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Kya mujhe is machine ki khareed ka pakka GST bill milega? 🧾\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "owner_trust": {
+      "category": "Decision Maker",
+      "en": "**Rajesh Yadav:** How can I trust a new tech company? What if your company closes office tomorrow? 🏢\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** नई टेक कंपनी पर भरोसा कैसे करूँ? कल को आपका ऑफिस बंद हो गया तो? 🏢\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Nayi tech company par bharosa kaise karun? Kal ko aapka office band ho gaya toh? 🏢\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "reports_daily": {
+      "category": "Reports",
+      "en": "**Rajesh Yadav:** Will I get daily trip reports on SMS or WhatsApp every evening automatically? 📲\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** क्या मुझे रोज़ शाम को SMS या WhatsApp पर ऑटोमैटिक ट्रिप रिपोर्ट मिलेगी? 📲\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Kya mujhe roz shaam ko SMS ya WhatsApp par automatic trip report milegi? 📲\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "reports_passenger": {
+      "category": "Reports",
+      "en": "**Rajesh Yadav:** Can I see how many passengers boarded from Ludhiana and dropped at Ambala? 📊\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** क्या मैं देख सकता हूँ कि लुधियाना से कितने यात्री चढ़े और अंबाला कितने उतरे? 📊\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Kya main dekh sakta hoon ki Ludhiana se kitne passenger chade aur Ambala kitne utare? 📊\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "demo_decision": {
+      "category": "Demo",
+      "en": "**Rajesh Yadav:** Hmm... what you're saying about conductor cash leakage makes sense. Okay, show me a live demo on one bus tomorrow morning! 🤝\n\n[CHIP: view_scorecard|View Final Readiness Scorecard]",
+      "hi": "**राजेश यादव:** हम्म... आपकी बात सही लग रही है। ठीक है, कल एक बस पर लाइव डेमो दिखाओ! 🤝\n\n[CHIP: view_scorecard|फाइनल स्कोरकार्ड देखें]",
+      "hgl": "**Rajesh Yadav:** Hmm... baat toh tumhari sahi hai conductor cash leakage ke baare mein. Chalo kal ek bus pe live demo dikha do! 🤝\n\n[CHIP: view_scorecard|View Final Readiness Scorecard]"
+    },
+    "closing_now": {
+      "category": "Closing",
+      "en": "**Rajesh Yadav:** Great! Let's complete the order setup today itself. Call your executive. ✍️\n\n[CHIP: view_scorecard|View Final Readiness Scorecard]",
+      "hi": "**राजेश यादव:** बढ़िया! आज ही आर्डर सेटअप पूरा करते हैं। अपने एग्जीक्यूटिव को बुलाओ। ✍️\n\n[CHIP: view_scorecard|फाइनल स्कोरकार्ड देखें]",
+      "hgl": "**Rajesh Yadav:** Badiya! Aaj hi order setup poora karte hain. Apne executive ko bulao. ✍️\n\n[CHIP: view_scorecard|View Final Readiness Scorecard]"
+    },
+    "closing_followup": {
+      "category": "Follow Up",
+      "en": "**Rajesh Yadav:** Leave your phone number. I will discuss with my partner and call you next week. 📞\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** अपना नंबर छोड़ जाओ। मैं अपने पार्टनर से बात करके अगले हफ्ते फोन करूँगा। 📞\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Apna number chhod jao. Main apne partner se baat karke agle hafte phone karunga. 📞\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "closing_think": {
+      "category": "Follow Up",
+      "en": "**Rajesh Yadav:** Give me your brochure. I will think about it and let you know. 📄\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** अपना ब्रोशर दे जाओ। मैं सोचकर बताऊंगा। 📄\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Apna brochure de jao. Main sochkar bataunga. 📄\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    },
+    "closing_season": {
+      "category": "Closing",
+      "en": "**Rajesh Yadav:** Come back after festival season when bus rush settles down. 🎆\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]",
+      "hi": "**राजेश यादव:** त्योहार के सीजन के बाद आना जब बस की भीड़ कम हो जाए। 🎆\n\n[CHIP: pause_roleplay|COACH — फीडबैक लें]",
+      "hgl": "**Rajesh Yadav:** Festival season ke baad aana jab bus ki bheed kam ho jaye. 🎆\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+    }
+  }
+}

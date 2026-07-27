@@ -1,0 +1,69 @@
+{
+  "_readme": "Add your videos here. Use `src` with a file placed in public/videos/. The `checkpoint` is the question the coach asks to confirm the rep actually watched.",
+
+  "videos": [
+    {
+      "id": "intro",
+      "order": 1,
+      "title": "ApniBus Introduction",
+      "subtitle": "Company, POS Machine, and why operators need it",
+      "duration": "6 min",
+      "src": "videos/Apnibus Introduction.mp4",
+      "ppt": "PPT/Apnibus intro Final.pdf",
+      "covers": [
+        "What ApniBus is and which states we operate in",
+        "The POS Ticketing Machine — our only product",
+        "The operator's biggest problem: revenue leakage"
+      ]
+    },
+    {
+      "id": "pos-demo",
+      "order": 2,
+      "title": "POS Machine Demo",
+      "subtitle": "Cash and UPI transaction flows on the smart POS device",
+      "duration": "8 min",
+      "ppt": "PPT/POS Machine Demo.pdf",
+      "parts": [
+        { "title": "Part 1: Cash Payment Demo", "src": "videos/Apnibus Cash Payment.mp4" },
+        { "title": "Part 2: UPI Payment Demo", "src": "videos/UPI payment.mp4" }
+      ],
+      "covers": [
+        "Instant digital ticketing and receipt printout",
+        "UPI payment generation and scan flow on-screen",
+        "Handling cash collection securely"
+      ]
+    },
+    {
+      "id": "commando",
+      "order": 3,
+      "title": "AB Commando App",
+      "subtitle": "BD internal app for attendance, lead entry, and visits",
+      "duration": "10 min",
+      "ppt": "PPT/AB Commando.pdf",
+      "parts": [
+        { "title": "Part 1: How to Start Day", "src": "videos/HOW TO START A DAY.mp4" },
+        { "title": "Part 2: How to Generate Lead", "src": "videos/Lead To Orders.mp4" },
+        { "title": "Part 3: How to Add Meeting", "src": "videos/How to add meeting.mp4" }
+      ],
+      "covers": [
+        "Attendance clock-in (selfie + location sync)",
+        "Creating new operator leads in the pipeline",
+        "Adding meeting log records right after visit follow-ups"
+      ]
+    },
+    {
+      "id": "business",
+      "order": 4,
+      "title": "AB Business App",
+      "subtitle": "Free real-time reports app for bus owners",
+      "duration": "5 min",
+      "src": "videos/AB Business Final video.mp4",
+      "ppt": "PPT/AB Business.pdf",
+      "covers": [
+        "Today's Account, trip-wise summary and passenger collection",
+        "Preventing conductor leakage and manual recording fraud",
+        "Strongest closing weapon to show live demonstration"
+      ]
+    }
+  ]
+}
