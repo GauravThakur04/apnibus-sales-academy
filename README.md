@@ -102,3 +102,4 @@ Then it asks them to try the improved version back.
 | Video shows placeholder | File name doesn't match `videos.json`, or it's not in `public/videos/` |
 | Video won't play | Must be H.264 MP4. Convert: `ffmpeg -i in.mov -vcodec h264 out.mp4` |
 | Phase 2 won't unlock | Answer the coach's 2 questions after each video |
+# apnibus-sales-academy
