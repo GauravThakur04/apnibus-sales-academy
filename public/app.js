@@ -594,16 +594,22 @@ function showVideo(i) {
   $("vSub").textContent = v.subtitle || "";
   $("vCovers").innerHTML = (v.covers || []).map((c) => `<li>${c}</li>`).join("");
 
-  // Handle PPT Viewer
-  const pptViewer = $("pptViewer");
+  // Handle PPT / PDF Slide Deck
   const pptContainer = $("pptContainer");
   const pptFileName = $("pptFileName");
+  const openBtn = $("pdfOpenNativeBtn");
+  const pptObjectViewer = $("pptObjectViewer");
+  const pptEmbedViewer = $("pptEmbedViewer");
+
   if (v.ppt) {
-    pptContainer.style.display = "flex";
-    pptViewer.src = v.ppt;
-    pptFileName.textContent = v.ppt.split('/').pop();
+    const pdfPath = v.ppt + "#toolbar=1";
+    if (pptContainer) pptContainer.style.display = "flex";
+    if (pptFileName) pptFileName.textContent = v.ppt.split('/').pop();
+    if (openBtn) openBtn.href = v.ppt;
+    if (pptObjectViewer) pptObjectViewer.data = pdfPath;
+    if (pptEmbedViewer) pptEmbedViewer.src = pdfPath;
   } else {
-    pptContainer.style.display = "none";
+    if (pptContainer) pptContainer.style.display = "none";
   }
 
   // Handle Video Parts
@@ -1375,71 +1381,7 @@ $("reset").onclick = () => {
 };
 
 /* boot */
-(async () => {
-  // URL Query Param auto-resume check (e.g. ?user=Rahul or ?candidate=Rahul)
-  const urlParams = new URLSearchParams(window.location.search);
-  const userParam = urlParams.get("user") || urlParams.get("candidate") || urlParams.get("name");
-
-  if (userParam && (!state.userRegistration || state.name.toLowerCase() !== userParam.toLowerCase())) {
-    try {
-      const res = await fetch("/api/results");
-      const results = await res.json();
-      const existing = results.find(u => u.name && u.name.toLowerCase() === userParam.toLowerCase());
-      if (existing) {
-        state.name = existing.name;
-        state.userRegistration = {
-          name: existing.name,
-          gender: existing.gender || "Male",
-          age: existing.age || "25",
-          location: existing.location || "Default",
-          lang: existing.choices?.lang || state.lang || "Hinglish"
-        };
-        if (existing.stepIndex !== undefined) state.stepIndex = existing.stepIndex;
-        if (existing.score !== undefined) state.score = existing.score;
-        save();
-      }
-    } catch (e) {
-      console.log("Could not auto-resume from URL param", e);
-    }
-  }
-
-  // Onboarding registration check
-  if (!state.userRegistration) {
-    $("registrationModal").style.display = "flex";
-  }
-
-  $("regSubmitBtn").onclick = async () => {
-    const name = $("regName").value.trim();
-    const gender = $("regGender").value;
-    const age = $("regAge").value;
-    const location = $("regLocation").value.trim();
-
-    if (!name || !age || !location) {
-      toast("⚠️ Please fill in all details!");
-      return;
-    }
-
-    const lang = $("regLang") ? $("regLang").value : "Hinglish";
-    state.name = name;
-    state.lang = lang;
-    state.langLocked = true;
-    state.userRegistration = { name, gender, age, location, lang };
-    save();
-
-    // Register user details on backend
-    try {
-      await fetch("/api/register-user", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ name, gender, age, location })
-      });
-    } catch (e) {
-      console.error("Failed to register on backend", e);
-    }
-
-    $("registrationModal").style.display = "none";
-    toast("✨ Registration successful! Welcome to the Academy.");
-  };
+async function bootContinuation() {
 
   await initVideos();
   const currentStep = STEPS[state.stepIndex] || STEPS[0];
@@ -1502,6 +1444,63 @@ $("reset").onclick = () => {
     };
   }
 
+}
+
+/* Boot entry-point — gates on Google Authentication */
+(async () => {
+  // URL Query Param auto-resume check (e.g. ?user=Rahul)
+  const urlParams = new URLSearchParams(window.location.search);
+  const userParam = urlParams.get("user") || urlParams.get("candidate") || urlParams.get("name");
+  const currentName = (state.name || "").toLowerCase();
+
+  if (userParam && (!state.userRegistration || currentName !== userParam.toLowerCase())) {
+    try {
+      const res = await fetch("/api/results");
+      const results = await res.json();
+      const existing = results.find(u => u.name && u.name.toLowerCase() === userParam.toLowerCase());
+      if (existing) {
+        state.name = existing.name;
+        state.userRegistration = {
+          name: existing.name,
+          gender: existing.gender || "Male",
+          age: existing.age || "25",
+          location: existing.location || "Default",
+          lang: existing.choices?.lang || state.lang || "Hinglish"
+        };
+        if (existing.stepIndex !== undefined) state.stepIndex = existing.stepIndex;
+        if (existing.score !== undefined) state.score = existing.score;
+        save();
+      }
+    } catch (e) {
+      console.log("Could not auto-resume from URL param", e);
+    }
+  }
+
+  // ── Google Auth Gate ──────────────────────────────────────
+  // Show modal if:
+  //  (a) no registration at all, OR
+  //  (b) has registration but it was NOT done via Google (old auto-bypass sessions)
+  const needsAuth = !state.userRegistration || !state.userRegistration.googleAuth;
+
+  if (needsAuth) {
+    // Clear any stale non-google registration so the user properly signs in
+    if (state.userRegistration && !state.userRegistration.googleAuth) {
+      state.userRegistration = null;
+      state.googleUser = null;
+      save();
+    }
+    const regModal = $("registrationModal");
+    if (regModal) regModal.style.display = "flex";
+    // handleGoogleSignIn will call bootContinuation() after auth
+    window._bootContinuation = bootContinuation;
+    return;
+  }
+
+  // ── Returning Google-authenticated user ───────────────────
+  const regModalEl = $("registrationModal");
+  if (regModalEl) regModalEl.style.display = "none";
+  renderGoogleUserUI();
+  await bootContinuation();
 })();
 
 // Mobile menu toggle logic
@@ -1536,61 +1535,117 @@ function initVoiceRecorder() {
   if (!mic) return;
 
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (SpeechRecognition) {
-    recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    
-    recognition.onresult = (e) => {
-      let text = "";
-      for (let i = e.resultIndex; i < e.results.length; ++i) {
-        if (e.results[i].isFinal) {
-          text += e.results[i][0].transcript;
-        }
-      }
-      if (text) {
-        const input = $("input");
-        input.value = (input.value + " " + text).trim();
-        input.style.height = "auto";
-        input.style.height = Math.min(input.scrollHeight, 180) + "px";
-      }
-    };
+  if (!SpeechRecognition) {
+    mic.title = "Voice not supported in this browser";
+    mic.style.opacity = "0.4";
+    return;
   }
+
+  recognition = new SpeechRecognition();
+  // hi-IN works best for Hinglish (mixed Hindi+English speech on Indian devices)
+  // It correctly converts Roman transliterations AND Devanagari speech
+  recognition.lang = "hi-IN";
+  recognition.continuous = false;    // one utterance at a time = more reliable
+  recognition.interimResults = true; // show words as you speak
+
+  let finalTranscript = "";
+  let interimTranscript = "";
+
+  recognition.onstart = () => {
+    finalTranscript = "";
+    interimTranscript = "";
+    mic.title = "🎙️ Listening... speak now";
+  };
+
+  recognition.onresult = (e) => {
+    interimTranscript = "";
+    for (let i = e.resultIndex; i < e.results.length; ++i) {
+      if (e.results[i].isFinal) {
+        finalTranscript += e.results[i][0].transcript + " ";
+      } else {
+        interimTranscript += e.results[i][0].transcript;
+      }
+    }
+    // Show interim text in real-time as user speaks
+    const inputEl = $("input");
+    const base = inputEl.dataset.baseValue || "";
+    inputEl.value = (base + finalTranscript + interimTranscript).trim();
+    inputEl.style.height = "auto";
+    inputEl.style.height = Math.min(inputEl.scrollHeight, 180) + "px";
+  };
+
+  recognition.onspeechend = () => {
+    recognition.stop();
+  };
+
+  recognition.onend = () => {
+    isRecording = false;
+    mic.classList.remove("recording");
+    mic.title = "Record Voice (Hinglish / Hindi / English)";
+
+    const inputEl = $("input");
+    const finalText = finalTranscript.trim();
+    if (finalText) {
+      inputEl.value = finalText;
+      delete inputEl.dataset.baseValue;
+      // Auto-send after mic stops if we got a good result
+      if (finalText.length > 1) {
+        setTimeout(() => {
+          const sendBtn = $("send");
+          if (sendBtn && !sendBtn.disabled) sendBtn.click();
+        }, 400);
+      }
+    }
+
+    if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+  };
+
+  recognition.onerror = (e) => {
+    console.warn("Speech recognition error:", e.error);
+    isRecording = false;
+    mic.classList.remove("recording");
+    mic.title = "Record Voice";
+    if (e.error === "no-speech") {
+      toast("🎙️ No speech detected. Try again!");
+    } else if (e.error === "not-allowed") {
+      toast("🎙️ Microphone permission denied. Please allow mic access.");
+    }
+  };
 
   mic.onclick = async () => {
     if (isRecording) {
+      // Stop recording
       isRecording = false;
       mic.classList.remove("recording");
       mic.title = "Record Voice";
-      if (mediaRecorder) mediaRecorder.stop();
-      if (recognition) recognition.stop();
+      recognition.stop();
+      if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
     } else {
       try {
+        // Start recording
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         audioChunks = [];
         mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) audioChunks.push(e.data);
-        };
+        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
         mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-          const audioUrl = URL.createObjectURL(audioBlob);
-          
-          bubble("user", `<audio src="${audioUrl}" controls class="chat-audio"></audio>`);
-          
           stream.getTracks().forEach(track => track.stop());
         };
 
         isRecording = true;
         mic.classList.add("recording");
-        mic.title = "Stop Recording";
+        mic.title = "🛑 Tap to stop";
         mediaRecorder.start();
-        if (recognition) {
-          recognition.lang = state.lang === "हिंदी" ? "hi-IN" : state.lang === "English" ? "en-IN" : "hi-IN";
-          recognition.start();
-        }
+
+        // Set language before starting: hi-IN = best for Hinglish on Indian phones
+        recognition.lang = state.lang === "हिंदी" ? "hi-IN" : state.lang === "English" ? "en-IN" : "hi-IN";
+        // Save current input as base so interim doesn't erase typed text
+        const inputEl = $("input");
+        inputEl.dataset.baseValue = inputEl.value ? inputEl.value + " " : "";
+        finalTranscript = "";
+        interimTranscript = "";
+        recognition.start();
       } catch (err) {
-        toast("🎙️ Permission denied or microphone not found!");
+        toast("🎙️ Microphone not found or permission denied!");
         console.error("Mic error:", err);
       }
     }
@@ -1672,33 +1727,55 @@ function initAttendancePage() {
   const q2Feedback = $("attendanceQ2Feedback");
   const btnGoToEmployment = $("btnGoToEmployment");
 
-  btnAttFreelance.onclick = () => {
-    btnAttFreelance.classList.add("active");
-    btnAttFse.classList.remove("active");
-    attFreelanceInfo.style.display = "flex";
-    attFseInfo.style.display = "none";
-    employmentSelected = "Freelance";
-    state.attendanceChoice = "Freelance";
-    save();
-    btnGoToEmployment.disabled = false;
-    tabEmployment.removeAttribute("disabled");
-  };
+  // Auto-enable FSE/ISA profile display by default
+  if (empFseInfo) empFseInfo.style.display = "flex";
+  if (incFseInfo) incFseInfo.style.display = "flex";
+  employmentSelected = "FSE";
+  state.employmentChoice = "ISA (Field Executive)";
+  state.incentiveChoice = "ISA (Field Executive)";
+  save();
 
-  btnAttFse.onclick = () => {
-    btnAttFse.classList.add("active");
-    btnAttFreelance.classList.remove("active");
-    attFseInfo.style.display = "flex";
-    attFreelanceInfo.style.display = "none";
-    employmentSelected = "FSE";
-    state.attendanceChoice = "FSE";
-    save();
-    btnGoToEmployment.disabled = !(attendanceQ1Correct && attendanceQ2Correct);
-    if (attendanceQ1Correct && attendanceQ2Correct) {
-      tabEmployment.removeAttribute("disabled");
-    } else {
-      tabEmployment.setAttribute("disabled", "true");
-    }
-  };
+  // Auto-display ISA profile content for all 3 policies by default
+  if ($("attFseInfo")) $("attFseInfo").style.display = "flex";
+  if ($("empFseInfo")) $("empFseInfo").style.display = "flex";
+  if ($("incFseInfo")) $("incFseInfo").style.display = "flex";
+  employmentSelected = "FSE";
+  state.attendanceChoice = "ISA (Field Executive)";
+  state.employmentChoice = "ISA (Field Executive)";
+  state.incentiveChoice = "ISA (Field Executive)";
+  save();
+
+  if (btnAttFreelance) {
+    btnAttFreelance.onclick = () => {
+      btnAttFreelance.classList.add("active");
+      if (btnAttFse) btnAttFse.classList.remove("active");
+      if (attFreelanceInfo) attFreelanceInfo.style.display = "flex";
+      if (attFseInfo) attFseInfo.style.display = "none";
+      employmentSelected = "Freelance";
+      state.attendanceChoice = "Freelance";
+      save();
+      if (btnGoToEmployment) btnGoToEmployment.disabled = false;
+      if (tabEmployment) tabEmployment.removeAttribute("disabled");
+    };
+  }
+
+  if (btnAttFse) {
+    btnAttFse.onclick = () => {
+      btnAttFse.classList.add("active");
+      if (btnAttFreelance) btnAttFreelance.classList.remove("active");
+      if (attFseInfo) attFseInfo.style.display = "flex";
+      if (attFreelanceInfo) attFreelanceInfo.style.display = "none";
+      employmentSelected = "FSE";
+      state.attendanceChoice = "FSE";
+      save();
+      if (btnGoToEmployment) btnGoToEmployment.disabled = !(attendanceQ1Correct && attendanceQ2Correct);
+      if (attendanceQ1Correct && attendanceQ2Correct) {
+        if (tabEmployment) tabEmployment.removeAttribute("disabled");
+      } else {
+        if (tabEmployment) tabEmployment.setAttribute("disabled", "true");
+      }
+    };
+  }
 
   q1Options.forEach(btn => {
     btn.onclick = () => {
@@ -1707,15 +1784,13 @@ function initAttendancePage() {
       const ans = btn.dataset.ans;
       if (ans === "A") {
         attendanceQ1Correct = true;
-        q1Feedback.style.color = "#10B981";
-        q1Feedback.innerHTML = "✓ Correct! 3 visits falls under Half Day. / सही उत्तर!";
-        q2Box.style.display = "flex";
+        if (q1Feedback) { q1Feedback.style.color = "#10B981"; q1Feedback.innerHTML = "✓ Correct! 3 visits falls under Half Day. / सही उत्तर!"; }
+        if (q2Box) q2Box.style.display = "flex";
       } else {
         attendanceQ1Correct = false;
-        q1Feedback.style.color = "#EF4444";
-        q1Feedback.innerHTML = "✗ Incorrect. Please check the attendance policy table above. / गलत उत्तर।";
-        q2Box.style.display = "none";
-        btnGoToEmployment.disabled = true;
+        if (q1Feedback) { q1Feedback.style.color = "#EF4444"; q1Feedback.innerHTML = "✗ Incorrect. Please check the attendance policy table above. / गलत उत्तर।"; }
+        if (q2Box) q2Box.style.display = "none";
+        if (btnGoToEmployment) btnGoToEmployment.disabled = true;
       }
     };
   });
@@ -1727,22 +1802,33 @@ function initAttendancePage() {
       const ans = btn.dataset.ans;
       if (ans === "B") {
         attendanceQ2Correct = true;
-        q2Feedback.style.color = "#10B981";
-        q2Feedback.innerHTML = "✓ Correct! Closing 1 sale marks you Present (Full Day) regardless of visits. / सही उत्तर!";
-        btnGoToEmployment.disabled = false;
-        tabEmployment.removeAttribute("disabled");
+        if (q2Feedback) { q2Feedback.style.color = "#10B981"; q2Feedback.innerHTML = "✓ Correct! Closing 1 sale marks you Present (Full Day) regardless of visits. / सही उत्तर!"; }
+        if (btnGoToEmployment) btnGoToEmployment.disabled = false;
+        if (tabEmployment) tabEmployment.removeAttribute("disabled");
       } else {
         attendanceQ2Correct = false;
-        q2Feedback.style.color = "#EF4444";
-        q2Feedback.innerHTML = "✗ Incorrect. Remember, closing 1 sale overrides visits. / गलत उत्तर।";
-        btnGoToEmployment.disabled = true;
+        if (q2Feedback) { q2Feedback.style.color = "#EF4444"; q2Feedback.innerHTML = "✗ Incorrect. Remember, closing 1 sale overrides visits. / गलत उत्तर।"; }
+        if (btnGoToEmployment) btnGoToEmployment.disabled = true;
       }
     };
   });
 
-  btnGoToEmployment.onclick = () => {
-    advanceStep();
-  };
+  if (btnGoToEmployment) {
+    btnGoToEmployment.onclick = () => {
+      const tabEmp = document.getElementById("tabEmployment");
+      const panelEmp = document.getElementById("panelEmployment");
+      state.stepIndex = STEPS.findIndex(s => s.phase === "employment");
+      state.mode = "employment";
+      save();
+      if (tabEmp) {
+        tabEmp.removeAttribute("disabled");
+        tabEmp.click();
+      }
+      document.querySelectorAll(".policy-panel").forEach(p => p.style.display = "none");
+      if (panelEmp) panelEmp.style.display = "flex";
+      updateSidebarStep();
+    };
+  }
 
   // --- TAB 2: EMPLOYMENT ---
   const btnEmpFreelance = $("btnEmpFreelance");
@@ -1820,12 +1906,12 @@ function initAttendancePage() {
       if (ans === "11500") {
         freelancerQuizCorrect = true;
         incFreelanceFeedback.style.color = "#10B981";
-        incFreelanceFeedback.innerHTML = "✓ Correct! 5 sales yields 7,500 + 4,000 fixed retainer = 11,500. / सही उत्तर!";
+        incFreelanceFeedback.innerHTML = "✓ Correct! 5 sales yields 7,500 + 4,000 = 11,500. / सही उत्तर!";
         if (employmentSelected === "Freelance") finishBtn.disabled = false;
       } else {
         freelancerQuizCorrect = false;
         incFreelanceFeedback.style.color = "#EF4444";
-        incFreelanceFeedback.innerHTML = "✗ Incorrect. Please review the retainer rule for 5 devices. / गलत उत्तर।";
+        incFreelanceFeedback.innerHTML = "✗ Incorrect. Please review the incentive rule for 5 devices. / गलत उत्तर।";
         finishBtn.disabled = true;
       }
     };
@@ -1888,15 +1974,18 @@ function initAttendancePage() {
 
 async function showCertificateModal() {
   try {
-    const res = await fetch("/api/analytics");
+    const res = await fetch(`/api/analytics?name=${encodeURIComponent(state.name || "")}`);
+    if (!res.ok) throw new Error("Unable to load certificate");
     const data = await res.json();
     const cert = data.certificate || {};
+    if (!cert.eligible || !cert.certificateId) throw new Error(cert.reason || "Certificate is not available");
 
     const learnerName = state.name || cert.recipientName || "BD Candidate";
-    const certId = cert.certificateId || ("CERT-" + Math.floor(100000 + Math.random() * 900000));
-    const readinessScore = cert.readinessScore || state.score || 87;
+    const learnerEmail = state.googleUser?.email || state.userRegistration?.email || "";
+    const certId = cert.certificateId;
+    const rawScore = cert.readinessScore !== undefined ? cert.readinessScore : (state.score || 85);
+    const readinessScore = typeof rawScore === 'string' ? parseInt(rawScore.replace(/%/g, ''), 10) || 85 : Math.round(rawScore);
     const issueDate = cert.issueDate || new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-    const location = state.userRegistration?.location || "Gurugram, HR";
 
     let modal = $("certificateModal");
     if (!modal) {
@@ -1909,69 +1998,72 @@ async function showCertificateModal() {
 
     modal.innerHTML = `
       <div id="printableCert" style="background:#101726;border:4px double #f0a227;border-radius:24px;padding:45px;max-width:820px;width:100%;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,0.95);position:relative;color:#fff;box-sizing:border-box;">
-        <div class="no-print" style="position:absolute;top:20px;right:20px;">
+
+        <!-- Close button (hidden when printing) -->
+        <div class="no-print" style="position:absolute;top:16px;right:16px;">
           <button id="closeCertX" style="background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:18px;border-radius:50%;width:36px;height:36px;cursor:pointer;display:grid;place-items:center;">✕</button>
         </div>
 
-        <!-- Gold Header Banner -->
-        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(240,162,39,0.3);padding-bottom:20px;margin-bottom:25px;">
+        <!-- Header: Logo + Certificate ID -->
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(240,162,39,0.3);padding-bottom:20px;margin-bottom:24px;flex-wrap:wrap;gap:10px;">
           <div style="display:flex;align-items:center;gap:12px;">
-            <img src="logo.png" alt="ApniBus Logo" style="height:48px;" />
+            <img src="logo.png" alt="ApniBus Logo" style="height:44px;" />
             <div style="text-align:left;">
-              <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:18px;color:#fff;">ApniBus</div>
-              <div style="font-size:12px;color:#9ca3af;">Field Sales Training Academy</div>
+              <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:17px;color:#fff;">ApniBus</div>
+              <div style="font-size:11.5px;color:#9ca3af;">Field Sales Training Academy</div>
             </div>
           </div>
           <div style="text-align:right;">
-            <span style="display:block;font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Certificate ID</span>
-            <span style="font-family:'Archivo',sans-serif;font-weight:700;color:#f0a227;font-size:14px;">${certId}</span>
+            <span style="display:block;font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Certificate ID</span>
+            <span style="font-family:'Archivo',sans-serif;font-weight:700;color:#f0a227;font-size:13px;">${certId}</span>
           </div>
         </div>
 
-        <!-- Trophy Seal -->
-        <div style="font-size:58px;margin-bottom:12px;filter:drop-shadow(0 4px 12px rgba(240,162,39,0.5));">🏆 📜 🥇</div>
+        <!-- Trophy -->
+        <div style="font-size:52px;margin-bottom:10px;filter:drop-shadow(0 4px 12px rgba(240,162,39,0.5));">🏆 📜 🥇</div>
 
-        <!-- Main Certificate Title -->
-        <h1 style="font-family:'Archivo',sans-serif;font-size:30px;color:#fff;margin:0 0 6px 0;letter-spacing:1px;text-transform:uppercase;">Certificate of Sales Readiness</h1>
-        <p style="color:#f0a227;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:0 0 25px 0;">Official Sales Certification</p>
+        <!-- Title -->
+        <h1 style="font-family:'Archivo',sans-serif;font-size:28px;color:#fff;margin:0 0 6px 0;letter-spacing:1px;text-transform:uppercase;">Certificate of Sales Readiness</h1>
+        <p style="color:#f0a227;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:0 0 22px 0;">Official Sales Certification</p>
 
-        <!-- Candidate Name -->
+        <!-- Candidate Name + Email ONLY -->
         <p style="color:#9ca3af;font-size:14px;margin:0 0 8px 0;">This is to certify that</p>
-        <h2 style="font-family:'Archivo',sans-serif;font-size:36px;color:#10b981;margin:0 0 16px 0;border-bottom:2px dashed rgba(16,185,129,0.4);display:inline-block;padding-bottom:6px;">${learnerName}</h2>
+        <h2 style="font-family:'Archivo',sans-serif;font-size:34px;color:#10b981;margin:0 0 8px 0;border-bottom:2px dashed rgba(16,185,129,0.4);display:inline-block;padding-bottom:6px;">${learnerName}</h2>
+        ${learnerEmail ? `<p style="color:#60A5FA;font-size:13px;font-weight:500;margin:0 0 20px 0;">✉ ${learnerEmail}</p>` : '<br/>'}
 
-        <!-- Certification Details -->
-        <p style="color:#d1d5db;font-size:15px;line-height:1.7;max-width:680px;margin:0 auto 25px auto;">
-          has successfully completed the 6-Phase Sales Operations & Field Readiness Training on <b>ApniBus POS Ticketing Machine</b>, <b>Objection Handling (A-A-A-A Framework)</b>, <b>Operator Pitch Simulation</b>, and <b>Policy Compliance</b>.
+        <!-- Training Description -->
+        <p style="color:#d1d5db;font-size:14.5px;line-height:1.7;max-width:660px;margin:0 auto 24px auto;">
+          has successfully completed the <b>6-Phase Sales Operations &amp; Field Readiness Training</b> on <b>ApniBus POS Ticketing Machine</b>, <b>Objection Handling (A-A-A-A Framework)</b>, <b>Operator Pitch Simulation</b>, and <b>Policy Compliance</b>.
         </p>
 
-        <!-- Scores Badges -->
-        <div style="display:flex;justify-content:center;gap:24px;margin-bottom:25px;">
-          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);padding:10px 20px;border-radius:12px;">
-            <span style="display:block;font-size:11px;color:#9ca3af;text-transform:uppercase;font-weight:700;">Readiness Score</span>
-            <b style="font-size:22px;color:#10b981;font-family:'Archivo',sans-serif;">${readinessScore}%</b>
+        <!-- Score Badges -->
+        <div class="cert-badge-row" style="display:flex;justify-content:center;gap:20px;margin-bottom:24px;flex-wrap:wrap;">
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);padding:10px 22px;border-radius:12px;">
+            <span style="display:block;font-size:10.5px;color:#9ca3af;text-transform:uppercase;font-weight:700;letter-spacing:0.5px;">Readiness Score</span>
+            <b style="font-size:24px;color:#10b981;font-family:'Archivo',sans-serif;">${readinessScore}%</b>
           </div>
-          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);padding:10px 20px;border-radius:12px;">
-            <span style="display:block;font-size:11px;color:#9ca3af;text-transform:uppercase;font-weight:700;">Status</span>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);padding:10px 22px;border-radius:12px;">
+            <span style="display:block;font-size:10.5px;color:#9ca3af;text-transform:uppercase;font-weight:700;letter-spacing:0.5px;">Status</span>
             <b style="font-size:18px;color:#f0a227;font-family:'Archivo',sans-serif;">FIELD READY 🎉</b>
           </div>
         </div>
 
-        <!-- Issue info and Authority signature -->
-        <div style="display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid rgba(255,255,255,0.12);padding-top:18px;margin-top:15px;">
+        <!-- Footer: Date + Authority -->
+        <div class="cert-footer-row" style="display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid rgba(255,255,255,0.12);padding-top:16px;margin-top:12px;gap:10px;">
           <div style="text-align:left;">
             <span style="display:block;font-size:12px;color:#9ca3af;">Date: <b>${issueDate}</b></span>
-            <span style="display:block;font-size:12px;color:#9ca3af;margin-top:2px;">Location: <b>${location}</b></span>
+            <span style="display:block;font-size:10.5px;color:#6B7280;margin-top:3px;">Certificate ID: ${certId}</span>
           </div>
           <div style="text-align:right;">
-            <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;color:#fff;">VP of Sales & Training</div>
+            <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:14px;color:#fff;">VP of Sales &amp; Training</div>
             <span style="display:block;font-size:12px;color:#10b981;font-weight:600;">ApniBus Sales Academy</span>
           </div>
         </div>
 
-        <!-- Buttons (Hidden when printing) -->
-        <div class="no-print" style="display:flex;gap:14px;justify-content:center;margin-top:30px;">
+        <!-- Action Buttons (hidden when printing) -->
+        <div class="no-print" style="display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap;">
           <button id="downloadCertBtn" style="background:#10b981;color:#000;font-weight:700;padding:12px 26px;border-radius:10px;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;">📥 Download / Print Certificate</button>
-          <button id="closeCertModalBtn" style="background:rgba(255,255,255,0.1);color:#fff;font-weight:700;padding:12px 24px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);cursor:pointer;font-size:14px;">✕ Close</button>
+          <button id="closeCertModalBtn" style="background:rgba(255,255,255,0.1);color:#fff;font-weight:700;padding:12px 22px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);cursor:pointer;font-size:14px;">✕ Close</button>
         </div>
       </div>
     `;
@@ -1980,10 +2072,382 @@ async function showCertificateModal() {
 
     $("closeCertX").onclick = () => modal.style.display = "none";
     $("closeCertModalBtn").onclick = () => modal.style.display = "none";
-    $("downloadCertBtn").onclick = () => {
-      window.print();
-    };
+    $("downloadCertBtn").onclick = () => window.print();
+
   } catch (e) {
     toast("Unable to generate certificate. Please complete training first!");
   }
 }
+
+
+
+/* Robust Global Click Handler for Attendance & Policy Quizzes */
+document.addEventListener("click", function(e) {
+  const btn = e.target.closest("#attendanceQ1Options .part-btn, #attendanceQ2Options .part-btn, #incFseOptions .part-btn");
+  if (!btn) return;
+
+  const parent = btn.closest(".quiz-options");
+  if (!parent) return;
+
+  parent.querySelectorAll(".part-btn").forEach(x => x.classList.remove("active"));
+  btn.classList.add("active");
+
+  const ans = btn.dataset.ans;
+
+  // Attendance Q1
+  if (parent.id === "attendanceQ1Options") {
+    const feedback = document.getElementById("attendanceQ1Feedback");
+    const q2Box = document.getElementById("attendanceQ2Box");
+    if (ans === "A") {
+      window._attQ1Done = true;
+      if (feedback) { feedback.style.color = "#10B981"; feedback.innerHTML = "✓ Correct! 3 visits falls under Half Day."; }
+      if (q2Box) q2Box.style.display = "flex";
+    } else {
+      window._attQ1Done = false;
+      if (feedback) { feedback.style.color = "#EF4444"; feedback.innerHTML = "✗ Incorrect. Please check the attendance policy table above."; }
+      if (q2Box) q2Box.style.display = "none";
+    }
+  }
+
+  // Attendance Q2
+  if (parent.id === "attendanceQ2Options") {
+    const feedback = document.getElementById("attendanceQ2Feedback");
+    const btnGo = document.getElementById("btnGoToEmployment");
+    const tabEmp = document.getElementById("tabEmployment");
+    if (ans === "B") {
+      window._attQ2Done = true;
+      if (feedback) { feedback.style.color = "#10B981"; feedback.innerHTML = "✓ Correct! Closing 1 sale marks you Present (Full Day) regardless of visits."; }
+      if (btnGo) btnGo.disabled = false;
+      if (tabEmp) tabEmp.removeAttribute("disabled");
+    } else {
+      window._attQ2Done = false;
+      if (feedback) { feedback.style.color = "#EF4444"; feedback.innerHTML = "✗ Incorrect. Remember, closing 1 sale overrides visits."; }
+      if (btnGo) btnGo.disabled = true;
+    }
+  }
+
+  // Incentive Question
+  if (parent.id === "incFseOptions") {
+    const feedback = document.getElementById("incFseFeedback");
+    const finishBtn = document.getElementById("attendanceFinishBtn");
+    if (ans === "500" || ans === "17300") {
+      if (feedback) { feedback.style.color = "#10B981"; feedback.innerHTML = "✓ Correct! 5 sales yields ₹15,300 + ₹2,000 = ₹17,300 takeaway."; }
+      if (finishBtn) finishBtn.disabled = false;
+    } else {
+      if (feedback) { feedback.style.color = "#EF4444"; feedback.innerHTML = "✗ Incorrect. Please review the compensation schedule for 5 sales."; }
+      if (finishBtn) finishBtn.disabled = true;
+    }
+  }
+});
+
+
+
+/* Global Click Handler for Proceed Buttons */
+document.addEventListener("click", function(e) {
+  const btn = e.target.closest("#btnGoToEmployment, #btnGoToIncentive, #tabAttendance, #tabEmployment, #tabIncentive");
+  if (!btn) return;
+
+  if (btn.id === "btnGoToEmployment") {
+    const tabEmp = document.getElementById("tabEmployment");
+    const panelEmp = document.getElementById("panelEmployment");
+    if (tabEmp) {
+      tabEmp.removeAttribute("disabled");
+      document.querySelectorAll(".tab-btn").forEach(t => {
+        t.classList.remove("active");
+        t.style.background = "rgba(255,255,255,0.02)";
+        t.style.border = "1px solid var(--line)";
+        t.style.color = "#8FA0B8";
+      });
+      tabEmp.classList.add("active");
+      tabEmp.style.background = "rgba(16, 185, 129, 0.15)";
+      tabEmp.style.border = "1px solid var(--green)";
+      tabEmp.style.color = "var(--green)";
+    }
+    document.querySelectorAll(".policy-panel").forEach(p => p.style.display = "none");
+    if (panelEmp) panelEmp.style.display = "flex";
+    state.mode = "employment";
+    save();
+  }
+
+  if (btn.id === "btnGoToIncentive") {
+    const tabInc = document.getElementById("tabIncentive");
+    const panelInc = document.getElementById("panelIncentive");
+    if (tabInc) {
+      tabInc.removeAttribute("disabled");
+      document.querySelectorAll(".tab-btn").forEach(t => {
+        t.classList.remove("active");
+        t.style.background = "rgba(255,255,255,0.02)";
+        t.style.border = "1px solid var(--line)";
+        t.style.color = "#8FA0B8";
+      });
+      tabInc.classList.add("active");
+      tabInc.style.background = "rgba(16, 185, 129, 0.15)";
+      tabInc.style.border = "1px solid var(--green)";
+      tabInc.style.color = "var(--green)";
+    }
+    document.querySelectorAll(".policy-panel").forEach(p => p.style.display = "none");
+    if (panelInc) panelInc.style.display = "flex";
+    state.mode = "incentive";
+    save();
+  }
+
+  if (btn.id === "tabAttendance") {
+    document.querySelectorAll(".policy-panel").forEach(p => p.style.display = "none");
+    const p = document.getElementById("panelAttendance");
+    if (p) p.style.display = "flex";
+  }
+  if (btn.id === "tabEmployment" && !btn.disabled) {
+    document.querySelectorAll(".policy-panel").forEach(p => p.style.display = "none");
+    const p = document.getElementById("panelEmployment");
+    if (p) p.style.display = "flex";
+  }
+  if (btn.id === "tabIncentive" && !btn.disabled) {
+    document.querySelectorAll(".policy-panel").forEach(p => p.style.display = "none");
+    const p = document.getElementById("panelIncentive");
+    if (p) p.style.display = "flex";
+  }
+});
+
+
+
+/* Global Click Handler for Complete & Get Certificate Button */
+document.addEventListener("click", function(e) {
+  const finishBtn = e.target.closest("#attendanceFinishBtn");
+  if (!finishBtn || finishBtn.disabled) return;
+
+  state.attendancePassed = true;
+  state.trainingCompleted = true;
+  save();
+  if (typeof syncWithBackend === "function") syncWithBackend();
+  if (typeof syncGates === "function") syncGates();
+
+  const nameStr = state.name || "BD Candidate";
+  let modal = document.getElementById("congratsModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "congratsModal";
+    modal.style.cssText = "position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(11,15,25,0.92);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;";
+    document.body.appendChild(modal);
+  }
+  modal.style.display = "flex";
+  modal.innerHTML = `
+    <div style="background:#111827;border:1px solid #10b981;border-radius:20px;padding:40px;max-width:550px;width:100%;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.6);animation:popIn 0.3s ease;">
+      <div style="font-size:64px;margin-bottom:12px;">🎉 🎓 🏆</div>
+      <h2 style="font-family:'Archivo',sans-serif;font-size:28px;color:#fff;margin:0 0 10px 0;">Congratulations, ${nameStr}!</h2>
+      <p style="color:#10b981;font-size:18px;font-weight:700;margin:0 0 20px 0;">You have successfully completed the ApniBus Sales Academy!</p>
+      <p style="color:#9ca3af;font-size:14px;line-height:1.6;margin:0 0 30px 0;">You are now fully certified and field ready to pitch POS Ticketing Machines to Bus Operators.</p>
+      <div style="display:flex;gap:12px;justify-content:center;">
+        <button id="closeCongratsBtn" class="btn primary-btn" style="background:#10b981;color:#000;font-weight:700;padding:12px 24px;border-radius:10px;border:none;cursor:pointer;">View Certificate / Report</button>
+      </div>
+    </div>
+  `;
+
+  const closeBtn = document.getElementById("closeCongratsBtn");
+  if (closeBtn) {
+    closeBtn.onclick = () => {
+      modal.style.display = "none";
+      if (typeof showCertificateModal === "function") showCertificateModal();
+    };
+  }
+});
+
+
+
+/* Google OAuth 2.0 Identity Services Handler */
+window.parseJwt = function(token) {
+  try {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    console.error("Failed to parse JWT:", e);
+    return null;
+  }
+};
+
+window.handleGoogleSignIn = async function(response) {
+  if (!response || !response.credential) return;
+  const payload = window.parseJwt(response.credential);
+  if (!payload) return;
+
+  console.log("✓ Google Sign-In Successful:", payload.name, payload.email);
+
+  // Store Google user profile in state
+  state.googleUser = {
+    name: payload.name,
+    email: payload.email,
+    picture: payload.picture,
+    sub: payload.sub
+  };
+
+  state.name = payload.name;
+
+  // Complete registration from Google profile
+  state.registered = true;
+  state.userRegistration = {
+    name: payload.name,
+    email: payload.email,
+    gender: "Male",
+    age: "24",
+    location: "Field",
+    lang: state.lang || "Hinglish",
+    googleAuth: true,
+    picture: payload.picture,
+    registeredAt: new Date().toISOString()
+  };
+
+  save();
+
+  // Send to backend (non-blocking)
+  fetch("/api/auth/google", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      token: response.credential,
+      user: state.googleUser,
+      registration: state.userRegistration
+    })
+  }).catch(err => console.error("Backend google auth sync error:", err));
+
+  // Hide the registration modal
+  const registrationModal = $("registrationModal");
+  if (registrationModal) registrationModal.style.display = "none";
+
+  toast(`Welcome ${payload.name}! Logged in via Google ✓`);
+
+  // Render Google profile badge in topbar
+  renderGoogleUserUI();
+
+  // Continue the boot flow that was halted waiting for auth
+  if (typeof window._bootContinuation === 'function') {
+    await window._bootContinuation();
+    window._bootContinuation = null;
+  }
+};
+
+function renderGoogleUserUI() {
+  if (!state.googleUser || !state.googleUser.email) return;
+
+  const topbarRight = document.querySelector(".topbar > div:last-child");
+  if (!topbarRight) return;
+
+  let googleBadge = document.getElementById("googleProfileBadge");
+  if (!googleBadge) {
+    googleBadge = document.createElement("div");
+    googleBadge.id = "googleProfileBadge";
+    googleBadge.style.cssText = "display:flex;align-items:center;gap:8px;background:rgba(66,133,244,0.12);border:1px solid rgba(66,133,244,0.4);padding:5px 14px 5px 6px;border-radius:22px;font-size:12px;color:#fff;cursor:pointer;";
+    topbarRight.insertBefore(googleBadge, topbarRight.firstChild);
+  }
+
+  googleBadge.innerHTML = `
+    <img src="${state.googleUser.picture}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid #4285F4;" alt="${state.googleUser.name}" onerror="this.style.display='none'" />
+    <div style="display:flex;flex-direction:column;">
+      <span style="font-weight:700;font-size:11.5px;color:#fff;line-height:1.2;">${state.googleUser.name}</span>
+      <span style="font-size:9.5px;color:#60A5FA;">${state.googleUser.email} ✓</span>
+    </div>
+  `;
+}
+
+// On page load: if returning user has google data in localStorage, render badge
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => { renderGoogleUserUI(); }, 800);
+});
+
+
+
+
+/* Mozilla PDF.js Interactive Slide Renderer */
+if (typeof pdfjsLib !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+window._currentPdfDoc = null;
+window._currentPdfPage = 1;
+
+window.loadPDFDocument = async function(pdfUrl) {
+  const canvas = document.getElementById("pdfCanvas");
+  const iframe = document.getElementById("pptViewer");
+  const pageNumEl = document.getElementById("pdfPageNum");
+  const pageCountEl = document.getElementById("pdfPageCount");
+
+  if (!pdfUrl) return;
+
+  if (typeof pdfjsLib === 'undefined') {
+    if (iframe) {
+      iframe.style.display = "block";
+      iframe.src = pdfUrl;
+    }
+    if (canvas) canvas.style.display = "none";
+    return;
+  }
+
+  try {
+    const loadingTask = pdfjsLib.getDocument(pdfUrl);
+    window._currentPdfDoc = await loadingTask.promise;
+    if (pageCountEl) pageCountEl.textContent = window._currentPdfDoc.numPages;
+    window._currentPdfPage = 1;
+
+    await window.renderPDFPage(window._currentPdfPage);
+
+    if (iframe) iframe.style.display = "none";
+    if (canvas) canvas.style.display = "block";
+  } catch (err) {
+    console.error("PDF.js render error, falling back to iframe/embed:", err);
+    if (iframe) {
+      iframe.style.display = "block";
+      iframe.src = pdfUrl;
+    }
+    if (canvas) canvas.style.display = "none";
+  }
+};
+
+window.renderPDFPage = async function(num) {
+  if (!window._currentPdfDoc) return;
+  try {
+    const page = await window._currentPdfDoc.getPage(num);
+    const canvas = document.getElementById("pdfCanvas");
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    const viewport = page.getViewport({ scale: 1.4 });
+
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+
+    const renderContext = {
+      canvasContext: ctx,
+      viewport: viewport
+    };
+
+    await page.render(renderContext).promise;
+
+    const pageNumEl = document.getElementById("pdfPageNum");
+    if (pageNumEl) pageNumEl.textContent = num;
+  } catch (e) {
+    console.error("Error rendering PDF page:", e);
+  }
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  const prevBtn = document.getElementById("pdfPrevPage");
+  const nextBtn = document.getElementById("pdfNextPage");
+
+  if (prevBtn) {
+    prevBtn.onclick = () => {
+      if (window._currentPdfPage <= 1) return;
+      window._currentPdfPage--;
+      window.renderPDFPage(window._currentPdfPage);
+    };
+  }
+
+  if (nextBtn) {
+    nextBtn.onclick = () => {
+      if (!window._currentPdfDoc || window._currentPdfPage >= window._currentPdfDoc.numPages) return;
+      window._currentPdfPage++;
+      window.renderPDFPage(window._currentPdfPage);
+    };
+  }
+});

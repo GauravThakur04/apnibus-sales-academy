@@ -764,33 +764,131 @@ button{font-family:inherit;cursor:pointer}
 
 
 
+/* ══════════════════════════════════════
+   MOBILE RESPONSIVE — Phone First (≤ 640px)
+   ══════════════════════════════════════ */
+
+/* Topbar adjustments on phone */
+@media (max-width: 640px) {
+  .topbar {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+  .topbar h1 { font-size: 15px; }
+  .topbar p { font-size: 11px; }
+  .topbar > div:last-child { gap: 8px; }
+
+  /* Hide the big promo image on phones */
+  .topbar img[alt="ApniBus Sales Representative"] {
+    height: 52px !important;
+    margin: -8px 0 -8px 0 !important;
+  }
+
+  /* Status badge smaller */
+  .status { padding: 4px 9px; font-size: 11px; }
+
+  /* Thread / Chat */
+  .thread { padding: 14px 12px; gap: 12px; }
+  .composer { padding: 10px 12px 14px; }
+  .msg { max-width: 92%; }
+  .chips { gap: 6px; }
+  .chip { padding: 6px 12px; font-size: 12.5px; }
+  #input { font-size: 14px; padding: 10px 12px; }
+  #send { padding: 10px 16px; font-size: 13.5px; }
+
+  /* Toolbar (phase 2) */
+  .toolbar { padding: 10px 12px; gap: 6px; }
+  .tool { padding: 7px 10px; font-size: 12px; }
+
+  /* Video view */
+  .vstage { padding: 12px 12px; gap: 12px; }
+  .player { max-width: 100% !important; height: auto !important; aspect-ratio: 9/16; }
+  .vmeta { padding: 14px 12px; }
+  .vhead h2 { font-size: 16px; }
+  .vhead p { font-size: 12.5px; }
+  .done-btn { padding: 12px; font-size: 13.5px; }
+
+  /* Liveband roleplay bar */
+  .liveband { padding: 8px 12px; font-size: 12px; flex-wrap: wrap; gap: 6px; }
+  .hud-item { font-size: 11px; }
+
+  /* Rail expanded on mobile — make it nice */
+  .rail.expanded { padding: 16px 14px; gap: 18px; }
+
+  /* Phase buttons in expanded rail */
+  .phase { padding: 9px 10px; }
+  .phase-body b { font-size: 13px; }
+  .phase-body i { font-size: 11px; }
+
+  /* Analytics card in rail */
+  .analytics-card { font-size: 12px; }
+
+  /* Policy panels (phases 4-6) */
+  .policy-panel { padding: 14px 12px !important; font-size: 13px; }
+  .policy-panel h2 { font-size: 16px !important; }
+  .policy-panel h3 { font-size: 14px !important; }
+  .policy-panel table { font-size: 11.5px; }
+  .policy-panel td, .policy-panel th { padding: 5px 7px !important; }
+
+  /* Google profile badge in topbar */
+  #googleProfileBadge span:last-child { display: none; } /* hide email on very small screens */
+}
+
+/* Very small phones (≤ 380px) */
+@media (max-width: 380px) {
+  .topbar h1 { font-size: 13.5px; }
+  .topbar img[alt="ApniBus Sales Representative"] { display: none !important; }
+  .thread { padding: 10px 10px; }
+  .composer { padding: 8px 10px 12px; }
+  .chip { font-size: 11.5px; padding: 5px 10px; }
+}
+
 /* Certificate Print & Download Optimization */
 @media print {
-  body * {
-    visibility: hidden !important;
-  }
-  #certificateModal, #certificateModal *, #printableCert, #printableCert * {
+  body * { visibility: hidden !important; }
+
+  #certificateModal, #certificateModal *,
+  #printableCert, #printableCert * {
     visibility: visible !important;
   }
+
   #certificateModal {
     position: fixed !important;
-    left: 0 !important;
-    top: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
+    left: 0 !important; top: 0 !important;
+    width: 100vw !important; height: 100vh !important;
     background: #101726 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    padding: 0 !important; margin: 0 !important;
+    overflow: hidden !important;
   }
+
   #printableCert {
     border: 4px double #f0a227 !important;
     box-shadow: none !important;
     background: #101726 !important;
+    max-width: 700px !important;
+    padding: 36px !important;
+    margin: auto !important;
   }
-  .no-print {
-    display: none !important;
-  }
+
+  .no-print { display: none !important; }
+
+  /* Keep certificate fonts readable */
+  #printableCert h1 { font-size: 24px !important; }
+  #printableCert h2 { font-size: 30px !important; }
 }
+
+/* Certificate mobile responsive */
+@media (max-width: 640px) {
+  #printableCert {
+    padding: 22px 16px !important;
+    border-radius: 14px !important;
+  }
+  #printableCert h1 { font-size: 18px !important; }
+  #printableCert h2 { font-size: 24px !important; }
+  .cert-badge-row { flex-direction: column !important; gap: 10px !important; align-items: center !important; }
+  .cert-footer-row { flex-direction: column !important; gap: 10px !important; text-align: center !important; }
+}
+

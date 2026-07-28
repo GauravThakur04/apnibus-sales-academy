@@ -50,7 +50,7 @@ export class AnalyticsEngine {
       recipientName: this.profile.name,
       title: "Certified Business Development Representative",
       issuer: "ApniBus Sales Academy",
-      readinessScore: `${this.profile.bestScore}%`
+      readinessScore: Math.round(this.profile.bestScore)
     };
   }
 }
