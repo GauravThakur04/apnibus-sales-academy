@@ -343,5 +343,266 @@
     "certificateId": "CERT-AB-9BB9676DE2A5",
     "certificateIssuedAt": "2026-07-28T11:05:57.246Z",
     "updatedAt": "2026-07-28T11:05:57.246Z"
+  },
+  {
+    "name": "Gaurav test user",
+    "gender": "Male",
+    "age": "42",
+    "location": "Gurugram",
+    "status": "COMPLETED",
+    "score": 85,
+    "verdict": "NOT YET CERTIFIED",
+    "trainingCompleted": true,
+    "videoCorrectCount": 8,
+    "qaCorrectCount": 3,
+    "weakAreas": [],
+    "choices": {
+      "attendance": "FSE",
+      "employment": "FSE",
+      "incentive": "FSE"
+    },
+    "attemptedGrooming": {
+      "deepDive": true,
+      "objection": false,
+      "roleplay": false,
+      "pitchCorrection": true
+    },
+    "qaChoices": {
+      "q1": "POS Ticketing Machine (Correct)",
+      "q2": "Not attempted",
+      "q3": "Not attempted",
+      "q4": "Not attempted",
+      "scenario": "Show simple UI & train (Correct)",
+      "finalTest": "Leakage control & Free App (Correct)"
+    },
+    "messages": [
+      {
+        "role": "user",
+        "content": "[SYSTEM] The rep just finished watching \"AB Business App\". undefined"
+      },
+      {
+        "role": "assistant",
+        "content": "Aapne video complete kar liya hai! Shabaash. Chaliye, main aapse 2 short questions poochta hoon taaki confirm ho sake.\n\nSawaal 1: Kya operator ko **ApniBus Business App** ke liye alag se paise dene hote hain?\n\n[CHIP: monthly|Haan, 500 Rupees monthly subscription] [CHIP: free|Nahi, ye POS machine ke sath bilkul free hai] [CHIP: onetime|Haan, one-time payment of 2000 Rupees] [CHIP: perbus|Haan, per-bus monthly charges lagte hain]"
+      },
+      {
+        "role": "user",
+        "content": "Nahi, ye POS machine ke sath bilkul free hai"
+      },
+      {
+        "role": "assistant",
+        "content": "Correct! Great job. 👍\n\nSawaal 2: Business App ka main benefit kya hai jo operators ke sath deal close karne mein help karta hai?\n\n[CHIP: replace|It replaces the conductor entirely] [CHIP: live|It shows real-time collection reports live on their phone] [CHIP: print|It prints physical tickets] [CHIP: music|It provides music entertainment]"
+      },
+      {
+        "role": "user",
+        "content": "It shows real-time collection reports live on their phone"
+      },
+      {
+        "role": "assistant",
+        "content": "Correct! You nailed it. 🎯\n\nCongratulations! 🎉 Aapne saare videos aur slides successfully confirm kar liye hain. Ab aapka **Phase 2 (Grooming)** unlock ho chuka hai!\n\n[CHIP: Grooming shuru karein]"
+      },
+      {
+        "role": "user",
+        "content": "Grooming shuru karein"
+      },
+      {
+        "role": "assistant",
+        "content": "🚀 **Welcome to Phase 2 Grooming — Step 1: Product Deep-Dive**\n\nYe hain ApniBus POS machine ke 7 main features:\n\n1. **Instant Digital Ticketing**: 2 second mein thermal ticket print.\n2. **Offline & Online Mode**: Bina network ke bhi chalega; signal aane pe auto-sync.\n3. **Long Battery Life**: 24 ghante nonstop battery backup.\n4. **Rugged Hardware**: Heavy drop-tested body.\n5. **Free Business App**: Owner ko phone pe live collection report bilkul FREE.\n6. **Revenue Leakage Control**: Conductor cash theft par full rok.\n7. **24x7 Support & Replacement Warranty**.\n\nStep 2 pe jaane ke liye niche click karein! 👇\n\n[CHIP: Next Step — Objection Handling]"
+      },
+      {
+        "role": "user",
+        "content": "Next Step — Objection Handling"
+      },
+      {
+        "role": "assistant",
+        "content": "Grahak ke objections ka jawab dena hi ek ache BD ki pehchan hai. Hum iske liye **A-A-A-A Framework** ka use karte hain:\n1. **Acknowledge** (Grahak ki baat ko sahi batana, unhe comfortable karna)\n2. **Ask** (Unse sawaal pooch kar unke dhandhe ka nuksan nikalna)\n3. **Address** (ApniBus ke benefits se us nuksan ko control karna batana)\n4. **Advance** (Agla step lena - setup ke liye bolna)\n\nAap kis common objection ka jawab seekhna chahte hain?\n\n[CHIP: Next Step — Fix My Pitch (Role Reversal)] [CHIP: Machine bahut mehngi hai] [CHIP: Pehle se button machine hai] [CHIP: Conductor nahi chala payega]"
+      },
+      {
+        "role": "user",
+        "content": "Machine bahut mehngi hai"
+      },
+      {
+        "role": "assistant",
+        "content": "Is objection ko **A-A-A-A Framework** se aise handle karein:\n\n1. **Acknowledge:** *\"Bhaiya, aap bilkul sahi keh rahe hain. Jab maine pehli baar is machine ka cost dekha tha, toh mujhe bhi laga tha ki ye thodi mehngi hai.\"*\n2. **Ask:** *\"Achha bhaiya, aapki ek bus ka roz ka average collection kitna ho jata hai? Lagbhag 10,000?\"*\n3. **Address:** *\"Aap toh jaante hi hain, manual ticketing mein 5% se 10% ka leakage (chori/galti) aam baat hai. Yaani har mahine lagbhag 15,000 ka nuksan. ApniBus POS machine aur free Business App lagane ke baad, aapka har ek ticket digital record hoga aur saara collection aapke paas aayega. Yaani machine ka kharch toh pehle hi hafte mein nikal aayega!\"*\n4. **Advance:** *\"Toh bhaiya, chaliye iska setup aaj hi karwa dete hain aur kal se aapki bus smart ho jayegi?\"*\n\nAapko ye tarika kaisa laga? Kya aap kisi aur objection ka jawab seekhna chahte hain?\n\n[CHIP: Pehle se button machine hai] [CHIP: Conductor cannot manage it]"
+      },
+      {
+        "role": "user",
+        "content": "Pehle se button machine hai"
+      },
+      {
+        "role": "assistant",
+        "content": "Purani button machines sirf ticket print karti hain, business manage nahi karti. **A-A-A-A Framework** se iska jawab:\n\n1. **Acknowledge:** *\"Bilkul sahi bhaiya, button machine se ticket toh ban jata hai aur wo sasti bhi hoti hai.\"*\n2. **Ask:** *\"Lekin bhaiya, kya wo button machine aapko ye bata sakti hai ki kis trip mein kitne passengers the, aur conductor ke paas abhi kitna cash hona chahiye?\"*\n3. **Address:** *\"ApniBus smart machine sirf ticket print nahi karti. Ye direct humare Business App se judi hai. Conductor jaise hi ticket banayega, aapko apne mobile par live collection, passenger counts, aur trip details dikhayi degi. Aapko conductor par depend nahi hona padega. Aap aisa samjho ki button waali machine normal feature phone hai aur touch waali machine smartphone hai.\"*\n4. **Advance:** *\"Toh purani button machine ko badlein aur smart ApniBus lagayein?\"*\n\n[CHIP: pitch|Fix My Pitch (Next Step)] [CHIP: roleplay|Customer Roleplay] [CHIP: Machine bahut mehngi hai]"
+      },
+      {
+        "role": "user",
+        "content": "Fix My Pitch (Next Step)"
+      },
+      {
+        "role": "assistant",
+        "content": "Rohit, aaj pitch pe kaam karenge — par thoda alag tarike se. 🔄\n\nDo round honge:\n* **Round 1 (Role Reversal)**: *Aap* bus owner banoge, aur *main* salesperson banunga. Aap dekhoge ki achha pitch kaisa lagta hai — customer ki kursi pe baith kar.\n* **Round 2 (Swap)**: Ulta. Main bus owner banunga, aur aap pitch karoge.\n\nRound 1 sabse important hai. Kyun? Kyunki jab tak aapko pata nahi ki **customer ko kya feel hota hai**, tab tak aap sirf ratta maar rahe ho.\n\nReady? Main aapko aapka character deta hoon. 🎭\n\n[CHIP: Chalo shuru karein] [CHIP: Ye kaise kaam karega?]"
+      },
+      {
+        "role": "user",
+        "content": "Chalo shuru karein"
+      },
+      {
+        "role": "assistant",
+        "content": "🎭 **Aapka character — dhyan se padho:**\n\n* **Naam:** Rajesh Yadav, umar 48\n* **Business:** 4 buses, Ludhiana–Chandigarh route, 12 saal se\n* **Padhai:** 10th pass. Hisaab-kitaab register mein, haath se.\n* **Mood:** Busy. Thoda shakki. Salesman roz aate hain.\n\n**Aapke dimaag mein ye chal raha hai:**\n* \"Mera kaam theek chal raha hai, naya kharcha kyun?\"\n* \"Machine kharab ho gayi toh? Kaun theek karega?\"\n* \"Conductor padha likha nahi hai, chala paayega?\"\n* **Sabse bada dard:** Conductor roz thoda paisa maar raha hai, par proof nahi hai. 🔑\n\n**Kaise act karna hai:**\n1. Shuruaat mein thanda response do. Bahut interested mat dikho.\n2. Kam se kam do baar objection karo (price, aur kaam chal raha hai pe).\n3. Jab koi baat sach mein chubhe — tab honestly react karo.\n\nReady Rajesh ji? Main aapke office mein aa raha hoon… 🎬\n\n[CHIP: Ready, shuru karo]"
+      },
+      {
+        "role": "user",
+        "content": "Ready, shuru karo"
+      },
+      {
+        "role": "assistant",
+        "content": "**Coach (as Salesperson):** Namaste sir, Rajesh ji aap hi hain na? Main Amit, ApniBus se. Do minute maangunga, usse zyada nahi. Chalega? 🤝\n\n[CHIP: Haan bhai bolo. Jaldi bolna, bus nikalne wali hai.] [CHIP: Abhi time nahi hai, baad mein aana.]"
+      },
+      {
+        "role": "user",
+        "content": "Baad mein"
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Mera kaam theek chal raha hai. Naya kharcha kyun? 🤨"
+      },
+      {
+        "role": "user",
+        "content": "Hmmm"
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Mera kaam toh 12 saal se register se theek chal raha hai. Naya kharcha kyun karun? 🤨\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+      },
+      {
+        "role": "user",
+        "content": "Nhi"
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Tum conductor chori ki baat kar rahe ho... kya tumhare paas koi proof hai ki mera conductor paisa maar raha hai? 🔑\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+      },
+      {
+        "role": "user",
+        "content": "Hook"
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Mere phone pe kya milega? Sirf ticket dikhega ya roz ka poora collection hisaab? 📱\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+      },
+      {
+        "role": "user",
+        "content": "Nopr"
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Iska kitna kharcha hai? ... Arre bhai, ye toh bahut mehnga hai! 💸\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+      },
+      {
+        "role": "user",
+        "content": "Ded"
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Mera conductor padha-likha nahi hai. Naye zamane ki machine nahi chala payega. 🤷‍♂️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+      },
+      {
+        "role": "user",
+        "content": "Ohk"
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Agar trip ke beech machine kharab ho gayi toh? Kaun repair karega? Support milega? 🔧\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+      },
+      {
+        "role": "user",
+        "content": "Ok"
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Hmm... baat toh tumhari sahi hai conductor cash leakage ke baare mein. Chalo kal ek bus pe live demo dikha do! 🤝\n\n[CHIP: view_scorecard|View 10-Category Scorecard]"
+      },
+      {
+        "role": "user",
+        "content": "View 10-Category Scorecard"
+      },
+      {
+        "role": "assistant",
+        "content": "# 📊 APNIBUS SALES ACADEMY — 10-CATEGORY SALES READINESS REPORT\n\n**BD Name:** Gaurav test user  |  **Difficulty Level:** Medium\n**Overall Score:** 74%  |  **Verdict:** **NEEDS PRACTICE 📈**\n\n---\n\n### 📈 Parametric Competency Breakdown (10 Categories)\n- **1. Greeting & Permission:** 10/10\n- **2. Rapport & Respect:** 7/10\n- **3. Pain Discovery:** 6/10\n- **4. Business App Mention:** 9/10\n- **5. POS Solution Mapping:** 9/10\n- **6. Objection Handling:** 8/10\n- **7. Active Listening:** 6/10\n- **8. Sales Confidence:** 9/10\n- **9. Closing & Next Step:** 4/10\n- **10. Commando Tooling:** 6/10\n\n🎯 **Dynamic Recommendation:** Focus on improving **Closing & Demo Request** (scored 4/10).\n\n[CHIP: restart_roleplay|🔄 Start Another Roleplay] [CHIP: qa|Proceed to Phase 3 Q&A Prep]"
+      },
+      {
+        "role": "user",
+        "content": "Scenario questions poocho."
+      },
+      {
+        "role": "assistant",
+        "content": "Swagat hai aapka Phase 3 Q&A Prep mein! 🎯 Chaliye **Rapid Q&A** shuru karte hain. Main aapse 4 sawal poochunga ek-ek karke.\n\n**Sawaal 1:** Hum bus operators ko kaunsa main product bechte hain?\n\n[CHIP: pos|POS Ticketing Machine] [CHIP: app|Free Business App] [CHIP: commando|Commando App] [CHIP: parts|Bus Spare Parts]"
+      },
+      {
+        "role": "user",
+        "content": "POS Ticketing Machine"
+      },
+      {
+        "role": "assistant",
+        "content": "**Scenario Practice Question:** Ek operator bolta hai: *\"Mera conductor bahut purana hai aur touch screen machine nahi chala payega.\"* Aap kya karenge?\n\n[CHIP: simple_ui|Show simple UI & promise free training] [CHIP: hire_new|Tell him to hire a new conductor] [CHIP: walk_away|Walk away from the deal]"
+      },
+      {
+        "role": "user",
+        "content": "Show simple UI & promise free training"
+      },
+      {
+        "role": "assistant",
+        "content": "Correct! Aasan UI aur free training ka bharosa dena hi sahi tarika hai. Chaliye Final Test par chalte hain! 🎯\n\n[CHIP: test|Proceed to Final Test]"
+      },
+      {
+        "role": "user",
+        "content": "Proceed to Final Test"
+      },
+      {
+        "role": "assistant",
+        "content": "Nahi, discount ya paper roll se unka main problem solve nahi hota. Kripya fir se try kijiye: 🔄\n\n**Final Test Question:** Bus owner ke sath deal close karne ka sabse important formula kya hai?\n\n[CHIP: close_leakage|Focus on free Business App and leakage control] [CHIP: discount|Offer heavy discounts] [CHIP: free_paper|Give free paper rolls]"
+      },
+      {
+        "role": "user",
+        "content": "Focus on free Business App and leakage control"
+      },
+      {
+        "role": "assistant",
+        "content": "# 📊 APNIBUS SALES ACADEMY — READINESS REPORT CARD\n\n**BD Name:** Gaurav Thakur\n**Final Score:** 85/100\n**Verdict:** **FIELD READY 🎉** (Aap field mein jaane ke liye bilkul tayyar hain!)\n\n---\n\n### Score Breakdown\n- **Product Knowledge:** 90% (POS aur Business App features par achhi pakad hai)\n- **Communication & Clarity:** 80% (Hinglish aur Hindi dono mein achha samjhate hain)\n- **Objection Handling:** 80% (A-A-A-A framework ka achha use kiya)\n\n[CHIP: attendance|Proceed to Phase 4 Attendance Policy] [CHIP: restart_roleplay|🔄 Start Another Roleplay]"
+      }
+    ],
+    "updatedAt": "2026-07-28T11:11:42.333Z"
+  },
+  {
+    "name": "Abdul Razzaq",
+    "gender": "Male",
+    "age": "24",
+    "location": "Field",
+    "status": "IN_TRAINING",
+    "score": 0,
+    "verdict": "NOT YET CERTIFIED",
+    "trainingCompleted": false,
+    "videoCorrectCount": 0,
+    "qaCorrectCount": 0,
+    "weakAreas": [],
+    "choices": {
+      "attendance": "",
+      "employment": "",
+      "incentive": ""
+    },
+    "attemptedGrooming": {
+      "deepDive": false,
+      "objection": false,
+      "roleplay": false,
+      "pitchCorrection": false
+    },
+    "qaChoices": {
+      "q1": "Not attempted",
+      "q2": "Not attempted",
+      "q3": "Not attempted",
+      "q4": "Not attempted",
+      "scenario": "Not attempted",
+      "finalTest": "Not attempted"
+    },
+    "messages": [],
+    "updatedAt": "2026-07-28T11:19:12.167Z"
   }
 ]
