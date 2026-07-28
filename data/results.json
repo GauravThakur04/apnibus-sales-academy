@@ -1,20 +1,45 @@
 [
   {
     "name": "Gaurav Thakur",
-    "gender": "",
-    "age": "",
-    "location": "",
-    "status": "COMPLETED",
-    "score": 91,
-    "verdict": "FIELD READY 🎉",
+    "gender": "Male",
+    "age": "24",
+    "location": "Field",
+    "status": "IN_TRAINING",
+    "score": 0,
+    "verdict": "NOT YET CERTIFIED",
+    "trainingCompleted": false,
+    "videoCorrectCount": 0,
+    "qaCorrectCount": 0,
     "weakAreas": [],
-    "updatedAt": "2026-07-27T04:07:58.322Z"
+    "choices": {
+      "attendance": "",
+      "employment": "",
+      "incentive": ""
+    },
+    "attemptedGrooming": {
+      "deepDive": false,
+      "objection": false,
+      "roleplay": false,
+      "pitchCorrection": false
+    },
+    "qaChoices": {
+      "q1": "Not attempted",
+      "q2": "Not attempted",
+      "q3": "Not attempted",
+      "q4": "Not attempted",
+      "scenario": "Not attempted",
+      "finalTest": "Not attempted"
+    },
+    "messages": [],
+    "certificateId": "CERT-AB-2F01F424C917",
+    "certificateIssuedAt": "2026-07-28T10:47:51.714Z",
+    "updatedAt": "2026-07-28T11:05:43.334Z"
   },
   {
-    "name": "Gaurav_27july",
+    "name": "jl",
     "gender": "Male",
-    "age": "21",
-    "location": "Gurugram,Haryana",
+    "age": "24",
+    "location": "Field",
     "status": "COMPLETED",
     "score": 85,
     "verdict": "NOT YET CERTIFIED",
@@ -29,9 +54,9 @@
     },
     "attemptedGrooming": {
       "deepDive": true,
-      "objection": false,
+      "objection": true,
       "roleplay": false,
-      "pitchCorrection": true
+      "pitchCorrection": false
     },
     "qaChoices": {
       "q1": "POS Ticketing Machine (Correct)",
@@ -48,7 +73,7 @@
       },
       {
         "role": "assistant",
-        "content": "Aapne video complete kar liya hai! Shabaash. Chaliye, main aapse 2 short questions poochta hoon taaki confirm ho sake.\n\nSawaal 1: Kya operator ko **ApniBus Business App** ke liye alag se paise dene hote hain?\n\n[CHIP: monthly|Haan, 500 Rupees monthly subscription] [CHIP: perbus|Haan, per-bus monthly charges lagte hain] [CHIP: free|Nahi, ye POS machine ke sath bilkul free hai] [CHIP: onetime|Haan, one-time payment of 2000 Rupees]"
+        "content": "Aapne video complete kar liya hai! Shabaash. Chaliye, main aapse 2 short questions poochta hoon taaki confirm ho sake.\n\nSawaal 1: Kya operator ko **ApniBus Business App** ke liye alag se paise dene hote hain?\n\n[CHIP: perbus|Haan, per-bus monthly charges lagte hain] [CHIP: onetime|Haan, one-time payment of 2000 Rupees] [CHIP: monthly|Haan, 500 Rupees monthly subscription] [CHIP: free|Nahi, ye POS machine ke sath bilkul free hai]"
       },
       {
         "role": "user",
@@ -56,7 +81,7 @@
       },
       {
         "role": "assistant",
-        "content": "Correct! Great job. 👍\n\nSawaal 2: Business App ka main benefit kya hai jo operators ke sath deal close karne mein help karta hai?\n\n[CHIP: music|It provides music entertainment] [CHIP: live|It shows real-time collection reports live on their phone] [CHIP: print|It prints physical tickets] [CHIP: replace|It replaces the conductor entirely]"
+        "content": "Correct! Great job. 👍\n\nSawaal 2: Business App ka main benefit kya hai jo operators ke sath deal close karne mein help karta hai?\n\n[CHIP: live|It shows real-time collection reports live on their phone] [CHIP: replace|It replaces the conductor entirely] [CHIP: print|It prints physical tickets] [CHIP: music|It provides music entertainment]"
       },
       {
         "role": "user",
@@ -84,6 +109,14 @@
       },
       {
         "role": "user",
+        "content": "Conductor nahi chala payega"
+      },
+      {
+        "role": "assistant",
+        "content": "Conductors ko technology se darr lagta hai. **A-A-A-A Framework** se iska jawab:\n\n1. **Acknowledge:** *\"Aapka darr bilkul sahi hai bhaiya. Agar conductor machine nahi chala payega toh nuksan aapka hi hoga.\"*\n2. **Ask:** *\"Achha bhaiya, kya aapka conductor smartphone chalata hai? WhatsApp ya YouTube use karta hai?\"*\n3. **Address:** *\"Hamari POS machine bilkul ek smartphone ki tarah chalne wali touch screen machine hai. Iska interface itna simple hai ki koi bhi isse 10 minute mein seekh sakta hai. Aur machine lagane ke baad hum conductor ko poori training khud dete hain aur unke sath ek trip par jaakar sab samjhate hain.\"*\n4. **Advance:** *\"Toh darr kis baat ka bhaiya? Chaliye setup karte hain, training ki zimmedari hamari hai.\"*\n\n[CHIP: Machine bahut mehngi hai]"
+      },
+      {
+        "role": "user",
         "content": "Machine bahut mehngi hai"
       },
       {
@@ -92,15 +125,31 @@
       },
       {
         "role": "user",
-        "content": "Pehle se button machine hai"
+        "content": "Conductor cannot manage it"
       },
       {
         "role": "assistant",
-        "content": "Purani button machines sirf ticket print karti hain, business manage nahi karti. **A-A-A-A Framework** se iska jawab:\n\n1. **Acknowledge:** *\"Bilkul sahi bhaiya, button machine se ticket toh ban jata hai aur wo sasti bhi hoti hai.\"*\n2. **Ask:** *\"Lekin bhaiya, kya wo button machine aapko ye bata sakti hai ki kis trip mein kitne passengers the, aur conductor ke paas abhi kitna cash hona chahiye?\"*\n3. **Address:** *\"ApniBus smart machine sirf ticket print nahi karti. Ye direct humare Business App se judi hai. Conductor jaise hi ticket banayega, aapko apne mobile par live collection, passenger counts, aur trip details dikhayi degi. Aapko conductor par depend nahi hona padega. Aap aisa samjho ki button waali machine normal feature phone hai aur touch waali machine smartphone hai.\"*\n4. **Advance:** *\"Toh purani button machine ko badlein aur smart ApniBus lagayein?\"*\n\n[CHIP: pitch|Fix My Pitch (Next Step)] [CHIP: roleplay|Customer Roleplay] [CHIP: Machine bahut mehngi hai]"
+        "content": "Conductors ko technology se darr lagta hai. **A-A-A-A Framework** se iska jawab:\n\n1. **Acknowledge:** *\"Aapka darr bilkul sahi hai bhaiya. Agar conductor machine nahi chala payega toh nuksan aapka hi hoga.\"*\n2. **Ask:** *\"Achha bhaiya, kya aapka conductor smartphone chalata hai? WhatsApp ya YouTube use karta hai?\"*\n3. **Address:** *\"Hamari POS machine bilkul ek smartphone ki tarah chalne wali touch screen machine hai. Iska interface itna simple hai ki koi bhi isse 10 minute mein seekh sakta hai. Aur machine lagane ke baad hum conductor ko poori training khud dete hain aur unke sath ek trip par jaakar sab samjhate hain.\"*\n4. **Advance:** *\"Toh darr kis baat ka bhaiya? Chaliye setup karte hain, training ki zimmedari hamari hai.\"*\n\n[CHIP: Machine bahut mehngi hai]"
       },
       {
         "role": "user",
-        "content": "Fix My Pitch (Next Step)"
+        "content": "Machine bahut mehngi hai"
+      },
+      {
+        "role": "assistant",
+        "content": "Is objection ko **A-A-A-A Framework** se aise handle karein:\n\n1. **Acknowledge:** *\"Bhaiya, aap bilkul sahi keh rahe hain. Jab maine pehli baar is machine ka cost dekha tha, toh mujhe bhi laga tha ki ye thodi mehngi hai.\"*\n2. **Ask:** *\"Achha bhaiya, aapki ek bus ka roz ka average collection kitna ho jata hai? Lagbhag 10,000?\"*\n3. **Address:** *\"Aap toh jaante hi hain, manual ticketing mein 5% se 10% ka leakage (chori/galti) aam baat hai. Yaani har mahine lagbhag 15,000 ka nuksan. ApniBus POS machine aur free Business App lagane ke baad, aapka har ek ticket digital record hoga aur saara collection aapke paas aayega. Yaani machine ka kharch toh pehle hi hafte mein nikal aayega!\"*\n4. **Advance:** *\"Toh bhaiya, chaliye iska setup aaj hi karwa dete hain aur kal se aapki bus smart ho jayegi?\"*\n\nAapko ye tarika kaisa laga? Kya aap kisi aur objection ka jawab seekhna chahte hain?\n\n[CHIP: Pehle se button machine hai] [CHIP: Conductor cannot manage it]"
+      },
+      {
+        "role": "user",
+        "content": "Objection handling sikhao — A-A-A-A framework se."
+      },
+      {
+        "role": "assistant",
+        "content": "Grahak ke objections ka jawab dena hi ek ache BD ki pehchan hai. Hum iske liye **A-A-A-A Framework** ka use karte hain:\n1. **Acknowledge** (Grahak ki baat ko sahi batana, unhe comfortable karna)\n2. **Ask** (Unse sawaal pooch kar unke dhandhe ka nuksan nikalna)\n3. **Address** (ApniBus ke benefits se us nuksan ko control karna batana)\n4. **Advance** (Agla step lena - setup ke liye bolna)\n\nAap kis common objection ka jawab seekhna chahte hain?\n\n[CHIP: Next Step — Fix My Pitch (Role Reversal)] [CHIP: Machine bahut mehngi hai] [CHIP: Pehle se button machine hai] [CHIP: Conductor nahi chala payega]"
+      },
+      {
+        "role": "user",
+        "content": "Next Step — Fix My Pitch (Role Reversal)"
       },
       {
         "role": "assistant",
@@ -188,7 +237,7 @@
       },
       {
         "role": "user",
-        "content": "heello"
+        "content": "helllo"
       },
       {
         "role": "assistant",
@@ -196,7 +245,7 @@
       },
       {
         "role": "user",
-        "content": "hello"
+        "content": "nhi"
       },
       {
         "role": "assistant",
@@ -204,7 +253,7 @@
       },
       {
         "role": "user",
-        "content": "i am good"
+        "content": "ohk"
       },
       {
         "role": "assistant",
@@ -212,7 +261,7 @@
       },
       {
         "role": "user",
-        "content": "no"
+        "content": "bilkul"
       },
       {
         "role": "assistant",
@@ -220,7 +269,7 @@
       },
       {
         "role": "user",
-        "content": "i am good"
+        "content": "theek hai"
       },
       {
         "role": "assistant",
@@ -228,7 +277,7 @@
       },
       {
         "role": "user",
-        "content": "good"
+        "content": "nhi"
       },
       {
         "role": "assistant",
@@ -236,7 +285,7 @@
       },
       {
         "role": "user",
-        "content": "need"
+        "content": "hh"
       },
       {
         "role": "assistant",
@@ -248,7 +297,7 @@
       },
       {
         "role": "assistant",
-        "content": "# 📊 APNIBUS SALES ACADEMY — 10-CATEGORY SALES READINESS REPORT\n\n**BD Name:** Gaurav_27july  |  **Difficulty Level:** Medium\n**Overall Score:** 82%  |  **Verdict:** **NEEDS PRACTICE 📈**\n\n---\n\n### 📈 Parametric Competency Breakdown (10 Categories)\n- **1. Greeting & Permission:** 10/10\n- **2. Rapport & Respect:** 10/10\n- **3. Pain Discovery:** 6/10\n- **4. Business App Mention:** 9/10\n- **5. POS Solution Mapping:** 9/10\n- **6. Objection Handling:** 8/10\n- **7. Active Listening:** 6/10\n- **8. Sales Confidence:** 9/10\n- **9. Closing & Next Step:** 9/10\n- **10. Commando Tooling:** 6/10\n\n🎯 **Dynamic Recommendation:** Focus on improving **Commando Tooling** (scored 6/10).\n\n[CHIP: restart_roleplay|🔄 Start Another Roleplay] [CHIP: qa|Proceed to Phase 3 Q&A Prep]"
+        "content": "# 📊 APNIBUS SALES ACADEMY — 10-CATEGORY SALES READINESS REPORT\n\n**BD Name:** jl  |  **Difficulty Level:** Medium\n**Overall Score:** 82%  |  **Verdict:** **NEEDS PRACTICE 📈**\n\n---\n\n### 📈 Parametric Competency Breakdown (10 Categories)\n- **1. Greeting & Permission:** 10/10\n- **2. Rapport & Respect:** 10/10\n- **3. Pain Discovery:** 6/10\n- **4. Business App Mention:** 9/10\n- **5. POS Solution Mapping:** 9/10\n- **6. Objection Handling:** 8/10\n- **7. Active Listening:** 6/10\n- **8. Sales Confidence:** 9/10\n- **9. Closing & Next Step:** 9/10\n- **10. Commando Tooling:** 6/10\n\n🎯 **Dynamic Recommendation:** Focus on improving **Commando Tooling** (scored 6/10).\n\n[CHIP: restart_roleplay|🔄 Start Another Roleplay] [CHIP: qa|Proceed to Phase 3 Q&A Prep]"
       },
       {
         "role": "user",
@@ -264,7 +313,7 @@
       },
       {
         "role": "assistant",
-        "content": "**Scenario Practice Question:** Ek operator bolta hai: *\"Mera conductor bahut purana hai aur touch screen machine nahi chala payega.\"* Aap kya karenge?\n\n[CHIP: simple_ui|Show simple UI & promise free training] [CHIP: hire_new|Tell him to hire a new conductor] [CHIP: walk_away|Walk away from the deal]"
+        "content": "Nahi, hume kabhi naya conductor rakhne ko nahi bolna chahiye. Kripya fir se try kijiye: 🔄\n\n**Scenario Practice Question:** Ek operator bolta hai: *\"Mera conductor bahut purana hai aur touch screen machine nahi chala payega.\"* Aap kya karenge?\n\n[CHIP: simple_ui|Show simple UI & promise free training] [CHIP: hire_new|Tell him to hire a new conductor] [CHIP: walk_away|Walk away from the deal]"
       },
       {
         "role": "user",
@@ -291,6 +340,8 @@
         "content": "# 📊 APNIBUS SALES ACADEMY — READINESS REPORT CARD\n\n**BD Name:** Gaurav Thakur\n**Final Score:** 85/100\n**Verdict:** **FIELD READY 🎉** (Aap field mein jaane ke liye bilkul tayyar hain!)\n\n---\n\n### Score Breakdown\n- **Product Knowledge:** 90% (POS aur Business App features par achhi pakad hai)\n- **Communication & Clarity:** 80% (Hinglish aur Hindi dono mein achha samjhate hain)\n- **Objection Handling:** 80% (A-A-A-A framework ka achha use kiya)\n\n[CHIP: attendance|Proceed to Phase 4 Attendance Policy] [CHIP: restart_roleplay|🔄 Start Another Roleplay]"
       }
     ],
-    "updatedAt": "2026-07-27T06:53:06.054Z"
+    "certificateId": "CERT-AB-9BB9676DE2A5",
+    "certificateIssuedAt": "2026-07-28T11:05:57.246Z",
+    "updatedAt": "2026-07-28T11:05:57.246Z"
   }
 ]
