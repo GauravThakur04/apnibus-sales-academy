@@ -837,7 +837,11 @@ button{font-family:inherit;cursor:pointer}
 /* Very small phones (≤ 380px) */
 @media (max-width: 380px) {
   .topbar h1 { font-size: 13.5px; }
-  .topbar img[alt="ApniBus Sales Representative"] { display: none !important; }
+  .topbar img[alt="ApniBus Sales Representative"] {
+    display: block !important;
+    height: 40px !important;
+    margin: -5px 0 -5px 0 !important;
+  }
   .thread { padding: 10px 10px; }
   .composer { padding: 8px 10px 12px; }
   .chip { font-size: 11.5px; padding: 5px 10px; }
@@ -891,4 +895,3 @@ button{font-family:inherit;cursor:pointer}
   .cert-badge-row { flex-direction: column !important; gap: 10px !important; align-items: center !important; }
   .cert-footer-row { flex-direction: column !important; gap: 10px !important; text-align: center !important; }
 }
-
