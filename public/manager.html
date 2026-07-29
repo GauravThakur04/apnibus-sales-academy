@@ -542,7 +542,6 @@
       <thead>
         <tr>
           <th>Candidate Name</th>
-          <th>Demographics</th>
           <th>Readiness Score</th>
           <th>Video Quiz</th>
           <th>Q&amp;A Score</th>
@@ -554,7 +553,7 @@
       </thead>
       <tbody id="resultsTableBody">
         <tr>
-          <td colspan="9" class="empty-state">Loading candidate analytics data...</td>
+          <td colspan="8" class="empty-state">Loading candidate analytics data...</td>
         </tr>
       </tbody>
     </table>
@@ -581,7 +580,7 @@
       allData = await res.json();
       renderData();
     } catch (e) {
-      resultsTableBody.innerHTML = `<tr><td colspan="9" class="empty-state" style="color: var(--red);">Error connecting to sync engine on server.</td></tr>`;
+      resultsTableBody.innerHTML = `<tr><td colspan="8" class="empty-state" style="color: var(--red);">Error connecting to sync engine on server.</td></tr>`;
     }
   }
 
@@ -594,7 +593,7 @@
 
   function renderData() {
     if (!allData || allData.length === 0) {
-      resultsTableBody.innerHTML = `<tr><td colspan="9" class="empty-state">No candidate registration or scores synchronized yet.</td></tr>`;
+      resultsTableBody.innerHTML = `<tr><td colspan="8" class="empty-state">No candidate registration or scores synchronized yet.</td></tr>`;
       updateStats([]);
       return;
     }
@@ -615,7 +614,7 @@
     });
 
     if (filtered.length === 0) {
-      resultsTableBody.innerHTML = `<tr><td colspan="9" class="empty-state">No matching candidates found for search/filter criteria.</td></tr>`;
+      resultsTableBody.innerHTML = `<tr><td colspan="8" class="empty-state">No matching candidates found for search/filter criteria.</td></tr>`;
       updateStats(allData);
       return;
     }
@@ -664,10 +663,6 @@
                 <span style="font-size: 12px; color: var(--text-muted);">📍 ${item.location || "N/A"}</span>
               </div>
             </div>
-          </td>
-          <td style="font-size: 13px; color: var(--text-muted); white-space: nowrap;">
-            ${item.age ? `Age: <b style="color:#fff;">${item.age}</b>` : "Age: N/A"}<br>
-            ${item.gender ? `Gender: <b style="color:#fff;">${item.gender}</b>` : "Gender: N/A"}
           </td>
           <td>
             <strong style="font-size: 15.5px; color: ${meterColor}; font-family: 'Archivo', sans-serif;">${scoreVal}%</strong>
