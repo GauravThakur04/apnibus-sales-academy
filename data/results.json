@@ -31,9 +31,9 @@
       "finalTest": "Not attempted"
     },
     "messages": [],
-    "certificateId": "CERT-AB-04F8A7FCCD83",
-    "certificateIssuedAt": "2026-07-29T08:53:47.078Z",
-    "updatedAt": "2026-07-29T08:53:47.080Z"
+    "certificateId": "CERT-AB-2F01F424C917",
+    "certificateIssuedAt": "2026-07-28T10:47:51.714Z",
+    "updatedAt": "2026-07-28T11:12:15.991Z"
   },
   {
     "name": "jl",
@@ -603,6 +603,545 @@
       "finalTest": "Not attempted"
     },
     "messages": [],
-    "updatedAt": "2026-07-28T11:19:12.167Z"
+    "updatedAt": "2026-07-29T07:45:20.562Z"
+  },
+  {
+    "name": "Sumit Gupta",
+    "gender": "Male",
+    "age": "24",
+    "location": "Field",
+    "status": "IN_TRAINING",
+    "score": 0,
+    "verdict": "NOT YET CERTIFIED",
+    "trainingCompleted": false,
+    "videoCorrectCount": 0,
+    "qaCorrectCount": 0,
+    "weakAreas": [],
+    "choices": {
+      "attendance": "",
+      "employment": "",
+      "incentive": ""
+    },
+    "attemptedGrooming": {
+      "deepDive": false,
+      "objection": false,
+      "roleplay": false,
+      "pitchCorrection": false
+    },
+    "qaChoices": {
+      "q1": "Not attempted",
+      "q2": "Not attempted",
+      "q3": "Not attempted",
+      "q4": "Not attempted",
+      "scenario": "Not attempted",
+      "finalTest": "Not attempted"
+    },
+    "messages": [],
+    "updatedAt": "2026-07-28T17:42:13.925Z"
+  },
+  {
+    "name": "Sonu Mishra",
+    "gender": "Male",
+    "age": "24",
+    "location": "Field",
+    "status": "FAILED",
+    "score": 33,
+    "verdict": "NOT YET CERTIFIED",
+    "trainingCompleted": false,
+    "videoCorrectCount": 4,
+    "qaCorrectCount": 0,
+    "weakAreas": [],
+    "choices": {
+      "attendance": "",
+      "employment": "",
+      "incentive": ""
+    },
+    "attemptedGrooming": {
+      "deepDive": false,
+      "objection": false,
+      "roleplay": false,
+      "pitchCorrection": false
+    },
+    "qaChoices": {
+      "q1": "Not attempted",
+      "q2": "Not attempted",
+      "q3": "Not attempted",
+      "q4": "Not attempted",
+      "scenario": "Not attempted",
+      "finalTest": "Not attempted"
+    },
+    "messages": [
+      {
+        "role": "user",
+        "content": "[SYSTEM] The rep just finished watching \"POS Machine Demo\". undefined"
+      },
+      {
+        "role": "assistant",
+        "content": "Aapne video complete kar liya hai! Shabaash. Chaliye, main aapse 2 short questions poochta hoon taaki confirm ho sake.\n\nSawaal 1: ApniBus POS machine par kaunse primary payment modes support hote hain?\n\n[CHIP: both|Both Cash aur UPI payments] [CHIP: cheque|Only Cheque payments] [CHIP: crypto|Only Crypto currency] [CHIP: card|Only Credit/Debit Card]"
+      },
+      {
+        "role": "user",
+        "content": "Both Cash aur UPI payments"
+      },
+      {
+        "role": "assistant",
+        "content": "Correct! Great job. 👍\n\nSawaal 2: POS Ticketing Machine se ticket kitni der mein print ho jata hai?\n\n[CHIP: instant|Instantly in less than 2 seconds] [CHIP: manual|Manual writing karni padti hai] [CHIP: medium|Takes 30 seconds] [CHIP: slow|Takes 1 minute per ticket]"
+      },
+      {
+        "role": "user",
+        "content": "Instantly in less than 2 seconds"
+      },
+      {
+        "role": "assistant",
+        "content": "Correct! You nailed it. 🎯\n\nAapne ye checkpoint successfully clear kar liya hai! 👍 Ab aap agla video **AB Commando App** dekh sakte hain.\n\n[CHIP: Agla video dekhte hain]"
+      }
+    ],
+    "updatedAt": "2026-07-28T12:27:37.622Z"
+  },
+  {
+    "name": "Rahul Rana",
+    "gender": "Male",
+    "age": "24",
+    "location": "Field",
+    "status": "FAILED",
+    "score": 55,
+    "verdict": "NOT YET CERTIFIED",
+    "trainingCompleted": false,
+    "videoCorrectCount": 8,
+    "qaCorrectCount": 0,
+    "weakAreas": [],
+    "choices": {
+      "attendance": "",
+      "employment": "",
+      "incentive": ""
+    },
+    "attemptedGrooming": {
+      "deepDive": true,
+      "objection": true,
+      "roleplay": false,
+      "pitchCorrection": false
+    },
+    "qaChoices": {
+      "q1": "Not attempted",
+      "q2": "Not attempted",
+      "q3": "Not attempted",
+      "q4": "Not attempted",
+      "scenario": "Not attempted",
+      "finalTest": "Not attempted"
+    },
+    "messages": [
+      {
+        "role": "user",
+        "content": "[SYSTEM] The rep just finished watching \"AB Business App\". undefined"
+      },
+      {
+        "role": "assistant",
+        "content": "Aapne video complete kar liya hai! Shabaash. Chaliye, main aapse 2 short questions poochta hoon taaki confirm ho sake.\n\nSawaal 1: Kya operator ko **ApniBus Business App** ke liye alag se paise dene hote hain?\n\n[CHIP: perbus|Haan, per-bus monthly charges lagte hain] [CHIP: monthly|Haan, 500 Rupees monthly subscription] [CHIP: onetime|Haan, one-time payment of 2000 Rupees] [CHIP: free|Nahi, ye POS machine ke sath bilkul free hai]"
+      },
+      {
+        "role": "user",
+        "content": "Nahi, ye POS machine ke sath bilkul free hai"
+      },
+      {
+        "role": "assistant",
+        "content": "Correct! Great job. 👍\n\nSawaal 2: Business App ka main benefit kya hai jo operators ke sath deal close karne mein help karta hai?\n\n[CHIP: live|It shows real-time collection reports live on their phone] [CHIP: print|It prints physical tickets] [CHIP: music|It provides music entertainment] [CHIP: replace|It replaces the conductor entirely]"
+      },
+      {
+        "role": "user",
+        "content": "It shows real-time collection reports live on their phone"
+      },
+      {
+        "role": "assistant",
+        "content": "Correct! You nailed it. 🎯\n\nCongratulations! 🎉 Aapne saare videos aur slides successfully confirm kar liye hain. Ab aapka **Phase 2 (Grooming)** unlock ho chuka hai!\n\n[CHIP: Grooming shuru karein]"
+      },
+      {
+        "role": "user",
+        "content": "Yes"
+      },
+      {
+        "role": "assistant",
+        "content": "Aaye main aapko humare product ki features batata hoon! 🎯 POS Ticketing Machine ki **7 main features**:\n\n1. **Digital Tickets** — Paper waste nahi\n2. **Live GPS Tracking** — Har bus kahan hai jaano\n3. **UPI + Cash** — Sab payment modes\n4. **Auto Reports** — Rozana collection report owner ko\n5. **Passenger Count** — Sahi ridership jaano\n6. **Badi Battery** — Poora din chalti hai\n7. **Free Business App** — Owner ko phone par real-time data\n\n[CHIP: objection|✓ Complete & Go to: Objection Handling] [CHIP: deep-dive|🔁 Repeat Deep-Dive]"
+      },
+      {
+        "role": "user",
+        "content": "Yea"
+      },
+      {
+        "role": "assistant",
+        "content": "Aaye main aapko humare product ki features batata hoon! 🎯 POS Ticketing Machine ki **7 main features**:\n\n1. **Digital Tickets** — Paper waste nahi\n2. **Live GPS Tracking** — Har bus kahan hai jaano\n3. **UPI + Cash** — Sab payment modes\n4. **Auto Reports** — Rozana collection report owner ko\n5. **Passenger Count** — Sahi ridership jaano\n6. **Badi Battery** — Poora din chalti hai\n7. **Free Business App** — Owner ko phone par real-time data\n\n[CHIP: objection|✓ Complete & Go to: Objection Handling] [CHIP: deep-dive|🔁 Repeat Deep-Dive]"
+      },
+      {
+        "role": "user",
+        "content": "Yes"
+      },
+      {
+        "role": "assistant",
+        "content": "Aaye main aapko humare product ki features batata hoon! 🎯 POS Ticketing Machine ki **7 main features**:\n\n1. **Digital Tickets** — Paper waste nahi\n2. **Live GPS Tracking** — Har bus kahan hai jaano\n3. **UPI + Cash** — Sab payment modes\n4. **Auto Reports** — Rozana collection report owner ko\n5. **Passenger Count** — Sahi ridership jaano\n6. **Badi Battery** — Poora din chalti hai\n7. **Free Business App** — Owner ko phone par real-time data\n\n[CHIP: objection|✓ Complete & Go to: Objection Handling] [CHIP: deep-dive|🔁 Repeat Deep-Dive]"
+      },
+      {
+        "role": "user",
+        "content": "✓ Complete & Go to: Objection Handling"
+      },
+      {
+        "role": "assistant",
+        "content": "Grahak ke objections ka jawab dena hi ek ache BD ki pehchan hai. Hum iske liye **A-A-A-A Framework** ka use karte hain:\n1. **Acknowledge** (Grahak ki baat ko sahi batana, unhe comfortable karna)\n2. **Ask** (Unse sawaal pooch kar unke dhandhe ka nuksan nikalna)\n3. **Address** (ApniBus ke benefits se us nuksan ko control karna batana)\n4. **Advance** (Agla step lena - setup ke liye bolna)\n\nAap kis common objection ka jawab seekhna chahte hain?\n\n[CHIP: Next Step — Fix My Pitch (Role Reversal)] [CHIP: Machine bahut mehngi hai] [CHIP: Pehle se button machine hai] [CHIP: Conductor nahi chala payega]"
+      },
+      {
+        "role": "user",
+        "content": "Next Step — Fix My Pitch (Role Reversal)"
+      },
+      {
+        "role": "assistant",
+        "content": "Rohit, aaj pitch pe kaam karenge — par thoda alag tarike se. 🔄\n\nDo round honge:\n* **Round 1 (Role Reversal)**: *Aap* bus owner banoge, aur *main* salesperson banunga. Aap dekhoge ki achha pitch kaisa lagta hai — customer ki kursi pe baith kar.\n* **Round 2 (Swap)**: Ulta. Main bus owner banunga, aur aap pitch karoge.\n\nRound 1 sabse important hai. Kyun? Kyunki jab tak aapko pata nahi ki **customer ko kya feel hota hai**, tab tak aap sirf ratta maar rahe ho.\n\nReady? Main aapko aapka character deta hoon. 🎭\n\n[CHIP: Chalo shuru karein] [CHIP: Ye kaise kaam karega?]"
+      },
+      {
+        "role": "user",
+        "content": "Chalo shuru karein"
+      },
+      {
+        "role": "assistant",
+        "content": "🎭 **Aapka character — dhyan se padho:**\n\n* **Naam:** Rajesh Yadav, umar 48\n* **Business:** 4 buses, Ludhiana–Chandigarh route, 12 saal se\n* **Padhai:** 10th pass. Hisaab-kitaab register mein, haath se.\n* **Mood:** Busy. Thoda shakki. Salesman roz aate hain.\n\n**Aapke dimaag mein ye chal raha hai:**\n* \"Mera kaam theek chal raha hai, naya kharcha kyun?\"\n* \"Machine kharab ho gayi toh? Kaun theek karega?\"\n* \"Conductor padha likha nahi hai, chala paayega?\"\n* **Sabse bada dard:** Conductor roz thoda paisa maar raha hai, par proof nahi hai. 🔑\n\n**Kaise act karna hai:**\n1. Shuruaat mein thanda response do. Bahut interested mat dikho.\n2. Kam se kam do baar objection karo (price, aur kaam chal raha hai pe).\n3. Jab koi baat sach mein chubhe — tab honestly react karo.\n\nReady Rajesh ji? Main aapke office mein aa raha hoon… 🎬\n\n[CHIP: Ready, shuru karo]"
+      },
+      {
+        "role": "user",
+        "content": "Ready, shuru karo"
+      },
+      {
+        "role": "assistant",
+        "content": "**Coach (as Salesperson):** Namaste sir, Rajesh ji aap hi hain na? Main Amit, ApniBus se. Do minute maangunga, usse zyada nahi. Chalega? 🤝\n\n[CHIP: Haan bhai bolo. Jaldi bolna, bus nikalne wali hai.] [CHIP: Abhi time nahi hai, baad mein aana.]"
+      },
+      {
+        "role": "user",
+        "content": "Haan bhai bolo. Jaldi bolna, bus nikalne wali hai."
+      },
+      {
+        "role": "assistant",
+        "content": "**Coach (as Salesperson):** Bilkul sir, seedha point pe aata hoon. Ek baat poochhun — aapki 4 buses hain na? **Roz ka collection aapko kaise pata chalta hai?**\n\n[CHIP: Conductor shaam ko deta hai, register mein likh lete hain]"
+      },
+      {
+        "role": "user",
+        "content": "Conductor shaam ko deta hai, register mein likh lete hain"
+      },
+      {
+        "role": "assistant",
+        "content": "**Coach (as Salesperson):** Samajh gaya sir. Aur ye jo paisa wo aapko deta hai — **aapko kaise pata ki poora hai?**\n\n*(pause — bolna mat)*\n\nSir main sach bataun, main is line mein 6 saal se hoon. Har operator jisse main milta hoon, unke saath yahi problem hai. Koi bolta nahi, par shaq sabko rehta hai. Aur mahine ke end mein aath-das hazaar ka farak aa jaata hai — kisi ko pata hi nahi chalta.\n\n[CHIP: Hmm... wo toh hai] [CHIP: Aapki machine kya karegi isme?]"
+      },
+      {
+        "role": "user",
+        "content": "Aapki machine kya karegi isme?"
+      },
+      {
+        "role": "assistant",
+        "content": "**Coach (as Salesperson):** Sir, humari POS Machine yahi problem solve karti hai. Conductor har passenger ko machine se ticket deta hai. **Har ticket ka record apne aap ban jaata hai.** Ab jo bhi collection hua, wo aapke phone pe dikh raha hai — live.\n\nAur ek cheez sir — machine ke saath **Business App bilkul free** milti hai. Aapke phone pe. Ye dekhiye 👇 Aaj ka poora collection. Har trip ka hisaab. Kaunsi bus ne kitna kamaya. Sir aap 10th pass ho ya graduate — isse farak nahi padta. **Sab picture jaisa dikhta hai.**\n\n[CHIP: Iska kitna kharcha hai?] [CHIP: Mera conductor nahi chala payega]"
+      },
+      {
+        "role": "user",
+        "content": "Iska kitna kharcha hai?"
+      },
+      {
+        "role": "assistant",
+        "content": "**Coach (as Salesperson):** Sir price main abhi bata dunga, chhupa nahi raha. 😊 Par ek second — pehle ye batao. Agar mahine mein **aath hazaar ki leakage** band ho jaaye, toh machine ka kharcha aapko mehnga lagega ya sasta?\n\n[CHIP: Sasta lagega, par batao toh] [CHIP: Conductor nahi chala payega]"
+      },
+      {
+        "role": "user",
+        "content": "Sasta lagega, par batao toh"
+      },
+      {
+        "role": "assistant",
+        "content": "**Coach (as Salesperson):** Sahi chinta hai sir, aur aap pehle nahi ho jo ye poochh rahe ho. Machine mein bas do-teen button dabane hote hain — jitna phone chalana aata hai, utna kaafi hai. Aur hum **training dete hain**, machine dene ke baad. Free. Aur agar kabhi dikkat aayi — **24×7 support** hai sir. Ek call, ho gaya.\n\nSir ek kaam karte hain — kal main aapki ek bus pe **live demo** dikha deta hoon. Conductor ke haath mein deke dekhte hain. Pasand aaye toh baat aage, nahi toh koi baat nahi. **Kal subah theek rahega ya shaam?** 🤝\n\n[CHIP: Subah theek rahega] [CHIP: Shaam ko aa jana]"
+      },
+      {
+        "role": "user",
+        "content": "Subah theek rahega"
+      },
+      {
+        "role": "assistant",
+        "content": "**Coach:** Perfect, kal milte hain. 🎬 **Scene khatam.**\n\nRohit, ab Rajesh ji ki kursi se bahar aa jao. 😊 Sach batao — **kaunsi line pe aap thoda ruk gaye the?** Jahan laga 'arre, ye toh sahi bol raha hai'?\n\n[CHIP: Conductor wali baat] [CHIP: Phone pe dikhega] [CHIP: 8 hazaar ka calculation]"
+      },
+      {
+        "role": "user",
+        "content": "8 hazaar ka calculation"
+      },
+      {
+        "role": "assistant",
+        "content": "**Coach:** 🎯 **Bilkul. Aur wahi poore pitch ka dil hai.**\n\nDhyan do — maine ek baar bhi shuru mein feature nahi bola. Maine ek **sawaal** poocha. Aur us sawaal ne Rajesh ji ke andar wo dard khol diya jo wo kisi ko batate bhi nahi.\n\nMaine paanch cheezein ki — ye aapki checklist hai:\n1. **Permission maangi:** 'do minute maangunga, chalega?'\n2. **Sawaal se shuru:** 'collection kaise pata chalta hai?'\n3. **Dard khola:** 'poora hai, ye kaise pata?' (phir chup ho gaya)\n4. **Solution + free app dikhaya:** bataya nahi, screen dikhayi\n5. **Price ko value se joda:** '8 hazaar bachega toh mehnga hai ya sasta?'\n6. **Chhota next step maanga:** demo maanga, order nahi\n\nAb aapki baari. Ab main Rajesh Yadav banunga, aur aap pitch karoge. Same aadmi, same mood.\n\nReady? 🎬\n\n[CHIP: Ready hoon]"
+      },
+      {
+        "role": "user",
+        "content": "Ready hoon"
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Haan bhai bolo. Jaldi bolna, bus nikalne wali hai. 🚌"
+      },
+      {
+        "role": "user",
+        "content": "Sir mujhe aapke bas 2 minute chahiye"
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Mera kaam toh 12 saal se register se theek chal raha hai. Naya kharcha kyun karun? 🤨\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+      },
+      {
+        "role": "user",
+        "content": "Sir aapko apna daily collection kaise pta chalta hai"
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Tum conductor chori ki baat kar rahe ho... kya tumhare paas koi proof hai ki mera conductor paisa maar raha hai? 🔑\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+      },
+      {
+        "role": "user",
+        "content": "Sir main daily basis pe operators se milta hoon aur aaj ki date mein operators ka sabse bada dard yahi hai."
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Mere phone pe kya milega? Sirf ticket dikhega ya roz ka poora collection hisaab? 📱\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+      },
+      {
+        "role": "user",
+        "content": "Sir aapko sath mein ApniBus business app milegi jismein aap daily basis pe poore din ka collection aur report dekh saktey hai"
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Iska kitna kharcha hai? ... Arre bhai, ye toh bahut mehnga hai! 💸\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+      },
+      {
+        "role": "user",
+        "content": "Sir agar main kahu ki monthly aapka 8000 minimum leakage bachega tab bhi kya aapko machine ka kharcha jyada lagega?"
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Mera conductor padha-likha nahi hai. Naye zamane ki machine nahi chala payega. 🤷‍♂️\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+      },
+      {
+        "role": "user",
+        "content": "Sir hamari machine digitally aur touch screen based hai jiska interface user friendly. Kya main apki bus mein kal live demo de sakta hoon?"
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Agar trip ke beech machine kharab ho gayi toh? Kaun repair karega? Support milega? 🔧\n\n[CHIP: pause_roleplay|COACH — Pause for feedback]"
+      },
+      {
+        "role": "user",
+        "content": "Sir hamara dedicated helpline number hai jis mien aapki sabhi issues ko turant solve Kiya jata hai"
+      },
+      {
+        "role": "assistant",
+        "content": "**Rajesh Yadav:** Hmm... baat toh tumhari sahi hai conductor cash leakage ke baare mein. Chalo kal ek bus pe live demo dikha do! 🤝\n\n[CHIP: view_scorecard|View 10-Category Scorecard]"
+      },
+      {
+        "role": "user",
+        "content": "Sure sir, live demo subah k time du ya shaam k time?"
+      },
+      {
+        "role": "assistant",
+        "content": "**Coach:** Perfect, kal milte hain. 🎬 **Scene khatam.**\n\nRohit, ab Rajesh ji ki kursi se bahar aa jao. 😊 Sach batao — **kaunsi line pe aap thoda ruk gaye the?** Jahan laga 'arre, ye toh sahi bol raha hai'?\n\n[CHIP: Conductor wali baat] [CHIP: Phone pe dikhega] [CHIP: 8 hazaar ka calculation]"
+      },
+      {
+        "role": "user",
+        "content": "8 hazaar ka calculation"
+      },
+      {
+        "role": "assistant",
+        "content": "**Coach:** 🎯 **Bilkul. Aur wahi poore pitch ka dil hai.**\n\nDhyan do — maine ek baar bhi shuru mein feature nahi bola. Maine ek **sawaal** poocha. Aur us sawaal ne Rajesh ji ke andar wo dard khol diya jo wo kisi ko batate bhi nahi.\n\nMaine paanch cheezein ki — ye aapki checklist hai:\n1. **Permission maangi:** 'do minute maangunga, chalega?'\n2. **Sawaal se shuru:** 'collection kaise pata chalta hai?'\n3. **Dard khola:** 'poora hai, ye kaise pata?' (phir chup ho gaya)\n4. **Solution + free app dikhaya:** bataya nahi, screen dikhayi\n5. **Price ko value se joda:** '8 hazaar bachega toh mehnga hai ya sasta?'\n6. **Chhota next step maanga:** demo maanga, order nahi\n\nAb aapki baari. Ab main Rajesh Yadav banunga, aur aap pitch karoge. Same aadmi, same mood.\n\nReady? 🎬\n\n[CHIP: Ready hoon]"
+      }
+    ],
+    "updatedAt": "2026-07-28T12:37:03.326Z"
+  },
+  {
+    "name": "Nishant Kumar Munde",
+    "gender": "Male",
+    "age": "24",
+    "location": "Field",
+    "status": "FAILED",
+    "score": 44,
+    "verdict": "NOT YET CERTIFIED",
+    "trainingCompleted": false,
+    "videoCorrectCount": 6,
+    "qaCorrectCount": 0,
+    "weakAreas": [],
+    "choices": {
+      "attendance": "",
+      "employment": "",
+      "incentive": ""
+    },
+    "attemptedGrooming": {
+      "deepDive": false,
+      "objection": false,
+      "roleplay": false,
+      "pitchCorrection": false
+    },
+    "qaChoices": {
+      "q1": "Not attempted",
+      "q2": "Not attempted",
+      "q3": "Not attempted",
+      "q4": "Not attempted",
+      "scenario": "Not attempted",
+      "finalTest": "Not attempted"
+    },
+    "messages": [
+      {
+        "role": "user",
+        "content": "[SYSTEM] The rep just finished watching \"AB Commando App\". undefined"
+      },
+      {
+        "role": "assistant",
+        "content": "Aapne video complete kar liya hai! Shabaash. Chaliye, main aapse 2 short questions poochta hoon taaki confirm ho sake.\n\nSawaal 1: Commando App mein kaam shuru karne ke liye BD ko sabse pehle kya karna padta hai?\n\n[CHIP: pos|Direct POS replacement request karna] [CHIP: call|Operator ko call karna] [CHIP: score|Academy scorecard check karna] [CHIP: start|Mark 'Start Day' with selfie and location]"
+      },
+      {
+        "role": "user",
+        "content": "Mark 'Start Day' with selfie and location"
+      },
+      {
+        "role": "assistant",
+        "content": "Correct! Great job. 👍\n\nSawaal 2: Is the Commando App for operators or for internal use?\n\n[CHIP: operators|Bus operators ke liye accounts dekhne ke liye] [CHIP: conductors|Conductors ke liye ticket kaatne ke liye] [CHIP: internal|Internal work tool for ApniBus BDs] [CHIP: passengers|Passengers ke liye ticket book karne ke liye]"
+      },
+      {
+        "role": "user",
+        "content": "Internal work tool for ApniBus BDs"
+      },
+      {
+        "role": "assistant",
+        "content": "Correct! You nailed it. 🎯\n\nAapne ye checkpoint successfully clear kar liya hai! 👍 Ab aap agla video **AB Business App** dekh sakte hain.\n\n[CHIP: Agla video dekhte hain]"
+      }
+    ],
+    "updatedAt": "2026-07-28T12:44:55.505Z"
+  },
+  {
+    "name": "Rajnish Kumar",
+    "gender": "Male",
+    "age": "24",
+    "location": "Field",
+    "status": "IN_TRAINING",
+    "score": 0,
+    "verdict": "NOT YET CERTIFIED",
+    "trainingCompleted": false,
+    "videoCorrectCount": 0,
+    "qaCorrectCount": 0,
+    "weakAreas": [],
+    "choices": {
+      "attendance": "",
+      "employment": "",
+      "incentive": ""
+    },
+    "attemptedGrooming": {
+      "deepDive": false,
+      "objection": false,
+      "roleplay": false,
+      "pitchCorrection": false
+    },
+    "qaChoices": {
+      "q1": "Not attempted",
+      "q2": "Not attempted",
+      "q3": "Not attempted",
+      "q4": "Not attempted",
+      "scenario": "Not attempted",
+      "finalTest": "Not attempted"
+    },
+    "messages": [],
+    "updatedAt": "2026-07-29T10:34:10.472Z"
+  },
+  {
+    "name": "Tarun Kumar",
+    "gender": "Male",
+    "age": "24",
+    "location": "Field",
+    "status": "IN_TRAINING",
+    "score": 0,
+    "verdict": "NOT YET CERTIFIED",
+    "trainingCompleted": false,
+    "videoCorrectCount": 0,
+    "qaCorrectCount": 0,
+    "weakAreas": [],
+    "choices": {
+      "attendance": "",
+      "employment": "",
+      "incentive": ""
+    },
+    "attemptedGrooming": {
+      "deepDive": false,
+      "objection": false,
+      "roleplay": false,
+      "pitchCorrection": false
+    },
+    "qaChoices": {
+      "q1": "Not attempted",
+      "q2": "Not attempted",
+      "q3": "Not attempted",
+      "q4": "Not attempted",
+      "scenario": "Not attempted",
+      "finalTest": "Not attempted"
+    },
+    "messages": [],
+    "updatedAt": "2026-07-28T14:06:54.392Z"
+  },
+  {
+    "name": "Razzaq Shah",
+    "gender": "Male",
+    "age": "24",
+    "location": "Field",
+    "status": "IN_TRAINING",
+    "score": 0,
+    "verdict": "NOT YET CERTIFIED",
+    "trainingCompleted": false,
+    "videoCorrectCount": 0,
+    "qaCorrectCount": 0,
+    "weakAreas": [],
+    "choices": {
+      "attendance": "",
+      "employment": "",
+      "incentive": ""
+    },
+    "attemptedGrooming": {
+      "deepDive": false,
+      "objection": false,
+      "roleplay": false,
+      "pitchCorrection": false
+    },
+    "qaChoices": {
+      "q1": "Not attempted",
+      "q2": "Not attempted",
+      "q3": "Not attempted",
+      "q4": "Not attempted",
+      "scenario": "Not attempted",
+      "finalTest": "Not attempted"
+    },
+    "messages": [],
+    "updatedAt": "2026-07-29T07:47:54.230Z"
+  },
+  {
+    "name": "arvind ranjan",
+    "gender": "Male",
+    "age": "24",
+    "location": "Field",
+    "status": "IN_TRAINING",
+    "score": 0,
+    "verdict": "NOT YET CERTIFIED",
+    "trainingCompleted": false,
+    "videoCorrectCount": 0,
+    "qaCorrectCount": 0,
+    "weakAreas": [],
+    "choices": {
+      "attendance": "",
+      "employment": "",
+      "incentive": ""
+    },
+    "attemptedGrooming": {
+      "deepDive": false,
+      "objection": false,
+      "roleplay": false,
+      "pitchCorrection": false
+    },
+    "qaChoices": {
+      "q1": "Not attempted",
+      "q2": "Not attempted",
+      "q3": "Not attempted",
+      "q4": "Not attempted",
+      "scenario": "Not attempted",
+      "finalTest": "Not attempted"
+    },
+    "messages": [],
+    "updatedAt": "2026-07-29T07:47:43.486Z"
   }
 ]
