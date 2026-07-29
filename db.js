@@ -115,10 +115,11 @@ export async function getAllCandidates() {
 export async function saveCandidate(candidate) {
   if (!candidate || !candidate.name) return;
 
-  // Always save to JSON file as fallback
-  saveToJsonFile(candidate);
-
-  if (!pool) return;
+  // If DB is connected, store directly in PostgreSQL DB
+  if (!pool) {
+    saveToJsonFile(candidate);
+    return;
+  }
 
   try {
     const query = `
