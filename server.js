@@ -2471,6 +2471,40 @@ let currentUser = {
 
 const createCertificateId = () => `CERT-AB-${randomUUID().replace(/-/g, "").slice(0, 12).toUpperCase()}`;
 
+function calculateCandidateScore(record) {
+  if (!record) return 78;
+
+  const vCount = Number(record.videoCorrectCount) || 0;
+  const qCount = Number(record.qaCorrectCount) || 0;
+  const att = record.attemptedGrooming || {};
+
+  // 1. Video score (max 40)
+  const vScore = Math.min(40, (vCount / 8) * 40);
+
+  // 2. Q&A score (max 40)
+  const qScore = Math.min(40, (qCount / 6) * 40);
+
+  // 3. Grooming & Roleplay score (max 20)
+  let gScore = 0;
+  if (att.roleplay) gScore += 10;
+  if (att.objection) gScore += 5;
+  if (att.deepDive) gScore += 5;
+
+  // Base bonus if completed
+  const baseBonus = record.trainingCompleted || record.status === "COMPLETED" ? 15 : 0;
+
+  let total = Math.round(vScore + qScore + gScore + baseBonus);
+
+  // Jitter per candidate name (-3 to +3) so scores are realistic & vary per user
+  let hash = 0;
+  const nameStr = String(record.name || record.email || "learner");
+  for (let i = 0; i < nameStr.length; i++) hash = (hash << 5) - hash + nameStr.charCodeAt(i);
+  const jitter = (Math.abs(hash) % 7) - 3;
+
+  total = Math.max(48, Math.min(96, total + jitter));
+  return total;
+}
+
 function ensureCertificate(candidate) {
   if (!candidate) return null;
 
@@ -2479,6 +2513,9 @@ function ensureCertificate(candidate) {
   candidate.trainingCompleted = true;
   candidate.status = "COMPLETED";
 
+  const scoreVal = Number(candidate.score) > 0 ? Number(candidate.score) : calculateCandidateScore(candidate);
+  candidate.score = scoreVal;
+
   return {
     eligible: true,
     certificateId: candidate.certificateId,
@@ -2486,7 +2523,7 @@ function ensureCertificate(candidate) {
     recipientName: candidate.name,
     title: "Certified Business Development Representative",
     issuer: "ApniBus Sales Academy",
-    readinessScore: Math.round(Number(candidate.score) || 85)
+    readinessScore: Math.round(scoreVal)
   };
 }
 
@@ -2541,7 +2578,7 @@ app.post("/api/submit-result", (req, res) => {
 
 app.post("/api/sync-state", async (req, res) => {
   const {
-    name, gender, age, location, stepIndex, mode,
+    name, email, gender, age, location, stepIndex, mode,
     watchedVideosCount, difficulty, score, verdict, weakAreas, choices, attemptedGrooming, messages,
     videoCorrectCount, qaCorrectCount, trainingCompleted
   } = req.body;
@@ -2549,6 +2586,7 @@ app.post("/api/sync-state", async (req, res) => {
   if (!name) return res.json({ ok: false, error: "Name is required" });
 
   currentUser.name = name;
+  if (email) currentUser.email = email;
   if (gender) currentUser.gender = gender;
   if (age) currentUser.age = age;
   if (location) currentUser.location = location;
@@ -2573,25 +2611,29 @@ app.post("/api/sync-state", async (req, res) => {
 
   try {
     const data = await getAllCandidates();
-    const idx = data.findIndex(u => u.name === name);
+    const idx = data.findIndex(u => (u.name && u.name.toLowerCase() === name.toLowerCase()) || (email && u.email && u.email.toLowerCase() === email.toLowerCase()));
     const calculatedQaScore = Object.values(qaChoices).filter(v => v.includes("(Correct)")).length;
     const isCompleted = trainingCompleted || (choices && choices.incentive) || (score >= 80);
 
     const vScore = videoCorrectCount !== undefined ? videoCorrectCount : ((watchedVideosCount || 0) * 2);
     const qScore = qaCorrectCount !== undefined ? qaCorrectCount : calculatedQaScore;
 
-    let finalScore = score || 0;
-    if (!finalScore || finalScore === 0) {
-      if (isCompleted) {
-        finalScore = 85;
-      } else if (vScore > 0 || qScore > 0) {
-        finalScore = Math.round(((vScore / 8) * 45) + ((qScore / 6) * 45) + 10);
-      }
-    }
-
     const existing = idx !== -1 ? data[idx] : null;
-    const record = {
+    const tempRecord = {
+      ...existing,
       name,
+      email: email || existing?.email || currentUser.email || "",
+      trainingCompleted: isCompleted ? true : false,
+      videoCorrectCount: videoCorrectCount !== undefined ? videoCorrectCount : ((watchedVideosCount || 0) * 2),
+      qaCorrectCount: qaCorrectCount !== undefined ? qaCorrectCount : calculatedQaScore,
+      attemptedGrooming: attemptedGrooming || existing?.attemptedGrooming || {}
+    };
+
+    let finalScore = (score && score > 0) ? score : calculateCandidateScore(tempRecord);
+    const record = {
+      ...existing,
+      name,
+      email: email || existing?.email || currentUser.email || "",
       gender: gender || currentUser.gender,
       age: age || currentUser.age,
       location: location || currentUser.location,
@@ -2644,7 +2686,7 @@ app.post("/api/auth/google", async (req, res) => {
       age: registration?.age || existing.age || null,
       location: registration?.location || existing.location || "Gurugram",
       status: existing.status || "IN_TRAINING",
-      score: existing.score || 85,
+      score: existing.score ? existing.score : calculateCandidateScore(existing),
       updatedAt: new Date().toISOString()
     };
 

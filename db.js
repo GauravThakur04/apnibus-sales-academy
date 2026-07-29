@@ -41,7 +41,7 @@ if (isDbConfigured) {
   });
 }
 
-// Ensure database table exists
+// Ensure database tables exist
 export async function initDb() {
   if (!pool) {
     console.log("ℹ️ PostgreSQL credentials incomplete or placeholders detected. Using local JSON fallback.");
@@ -49,13 +49,27 @@ export async function initDb() {
   }
 
   try {
-    const createTableQuery = `
+    // 1. Table storing ONLY name, mail, certificate_id, certificate
+    const createCertificatesTableQuery = `
+      CREATE TABLE IF NOT EXISTS training_certificates (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        mail VARCHAR(255) UNIQUE NOT NULL,
+        certificate_id VARCHAR(100) UNIQUE NOT NULL,
+        certificate TEXT,
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+      );
+      CREATE INDEX IF NOT EXISTS idx_training_certificates_mail ON training_certificates(mail);
+      CREATE INDEX IF NOT EXISTS idx_training_certificates_cert_id ON training_certificates(certificate_id);
+    `;
+
+    // 2. Full candidates progression table
+    const createCandidatesTableQuery = `
       CREATE TABLE IF NOT EXISTS training_candidates (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE,
-        gender VARCHAR(50) DEFAULT NULL,
-        age VARCHAR(20) DEFAULT NULL,
         location VARCHAR(255) DEFAULT 'Field',
         status VARCHAR(50) DEFAULT 'IN_TRAINING',
         score INT DEFAULT 0,
@@ -74,19 +88,44 @@ export async function initDb() {
         created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
       );
-      ALTER TABLE training_candidates ALTER COLUMN gender DROP DEFAULT;
-      ALTER TABLE training_candidates ALTER COLUMN age DROP DEFAULT;
-      ALTER TABLE training_candidates ALTER COLUMN gender SET DEFAULT NULL;
-      ALTER TABLE training_candidates ALTER COLUMN age SET DEFAULT NULL;
+      ALTER TABLE training_candidates DROP COLUMN IF EXISTS gender;
+      ALTER TABLE training_candidates DROP COLUMN IF EXISTS age;
       CREATE INDEX IF NOT EXISTS idx_training_candidates_email ON training_candidates(email);
       CREATE INDEX IF NOT EXISTS idx_training_candidates_name ON training_candidates(name);
     `;
-    await pool.query(createTableQuery);
-    console.log("✅ PostgreSQL table 'training_candidates' initialized successfully on Azure!");
+
+    await pool.query(createCertificatesTableQuery);
+    await pool.query(createCandidatesTableQuery);
+    console.log("✅ PostgreSQL tables 'training_certificates' and 'training_candidates' initialized successfully on Azure!");
     return true;
   } catch (err) {
-    console.error("❌ Failed to initialize PostgreSQL table:", err.message);
+    console.error("❌ Failed to initialize PostgreSQL tables:", err.message);
     return false;
+  }
+}
+
+// Save specifically to training_certificates table (name, mail, certificate_id, certificate)
+export async function saveCertificateRecord({ name, mail, certificateId, certificate }) {
+  if (!name || !certificateId) return;
+
+  const mailKey = mail || (name.toLowerCase().replace(/\s+/g, '_') + "@apnibus.com");
+
+  if (pool) {
+    try {
+      const query = `
+        INSERT INTO training_certificates (name, mail, certificate_id, certificate, updated_at)
+        VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+        ON CONFLICT (mail) DO UPDATE SET
+          name = EXCLUDED.name,
+          certificate_id = EXCLUDED.certificate_id,
+          certificate = EXCLUDED.certificate,
+          updated_at = CURRENT_TIMESTAMP;
+      `;
+      await pool.query(query, [name, mailKey, certificateId, certificate || "FIELD READY"]);
+      console.log(`✅ Saved record to 'training_certificates' table for: ${name} (${mailKey})`);
+    } catch (err) {
+      console.error("Error saving to training_certificates table:", err.message);
+    }
   }
 }
 
@@ -111,30 +150,47 @@ export async function getAllCandidates() {
   return [];
 }
 
-// Save or Update candidate
+// Save or Update candidate in training_candidates and training_certificates
 export async function saveCandidate(candidate) {
   if (!candidate || !candidate.name) return;
 
-  // If DB is connected, store directly in PostgreSQL DB
+  const rawEmail = candidate.email || (candidate.name.toLowerCase().replace(/\s+/g, '_') + "@apnibus.com");
+  const certId = candidate.certificateId || ("CERT-AB-" + (candidate.name.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4) || 'BD') + "-" + Math.random().toString(36).substring(2, 8).toUpperCase());
+
+  // Save to training_certificates table
+  await saveCertificateRecord({
+    name: candidate.name,
+    mail: rawEmail,
+    certificateId: certId,
+    certificate: candidate.certificateHtml || (candidate.trainingCompleted || candidate.status === "COMPLETED" ? "FIELD READY" : "IN TRAINING")
+  });
+
+  // If DB is NOT connected, use local file fallback
   if (!pool) {
     saveToJsonFile(candidate);
     return;
   }
 
   try {
+    // 1. Check if candidate exists by email or name to prevent email mismatch duplicates
+    const checkRes = await pool.query(
+      'SELECT email FROM training_candidates WHERE LOWER(name) = LOWER($1) OR LOWER(email) = LOWER($2) LIMIT 1',
+      [candidate.name, rawEmail]
+    );
+
+    const emailKey = (checkRes.rows.length > 0 && checkRes.rows[0].email) ? checkRes.rows[0].email : rawEmail;
+
     const query = `
       INSERT INTO training_candidates (
-        name, email, gender, age, location, status, score, verdict,
+        name, email, location, status, score, verdict,
         training_completed, step_index, video_correct_count, qa_correct_count,
         weak_areas, choices, attempted_grooming, qa_choices, messages,
         certificate_id, certificate_issued_at, updated_at
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, CURRENT_TIMESTAMP
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, CURRENT_TIMESTAMP
       )
       ON CONFLICT (email) DO UPDATE SET
         name = EXCLUDED.name,
-        gender = EXCLUDED.gender,
-        age = EXCLUDED.age,
         location = EXCLUDED.location,
         status = EXCLUDED.status,
         score = EXCLUDED.score,
@@ -153,13 +209,9 @@ export async function saveCandidate(candidate) {
         updated_at = CURRENT_TIMESTAMP;
     `;
 
-    const emailKey = candidate.email || candidate.name.toLowerCase().replace(/\s+/g, '_') + "@apnibus.com";
-
     const values = [
       candidate.name,
       emailKey,
-      candidate.gender || null,
-      candidate.age || null,
       candidate.location || 'Field',
       candidate.status || 'IN_TRAINING',
       candidate.score || 0,
@@ -173,8 +225,8 @@ export async function saveCandidate(candidate) {
       JSON.stringify(candidate.attemptedGrooming || {}),
       JSON.stringify(candidate.qaChoices || {}),
       JSON.stringify(candidate.messages || []),
-      candidate.certificateId || null,
-      candidate.certificateIssuedAt ? new Date(candidate.certificateIssuedAt) : null
+      candidate.certificateId || certId,
+      candidate.certificateIssuedAt ? new Date(candidate.certificateIssuedAt) : new Date()
     ];
 
     await pool.query(query, values);
