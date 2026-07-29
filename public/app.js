@@ -1462,8 +1462,8 @@ async function bootContinuation() {
         state.name = existing.name;
         state.userRegistration = {
           name: existing.name,
-          gender: existing.gender || "Male",
-          age: existing.age || "25",
+          gender: existing.gender || null,
+          age: existing.age || null,
           location: existing.location || "Default",
           lang: existing.choices?.lang || state.lang || "Hinglish"
         };
@@ -2290,8 +2290,8 @@ window.handleGoogleSignIn = async function(response) {
   state.userRegistration = {
     name: payload.name,
     email: payload.email,
-    gender: "Male",
-    age: "24",
+    gender: null,
+    age: null,
     location: "Field",
     lang: state.lang || "Hinglish",
     googleAuth: true,

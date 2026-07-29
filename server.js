@@ -2,6 +2,7 @@ import { evaluateSessionParametric } from "./domain/evaluationEngine.js";
 import { RoleplaySessionEngine } from "./domain/roleplayEngine.js";
 import { AppStateMachine, STEPS } from "./domain/stateMachine.js";
 import { AnalyticsEngine } from "./domain/analyticsEngine.js";
+import { initDb, getAllCandidates, saveCandidate } from "./db.js";
 import express from "express";
 import fs from "fs";
 import path from "path";
@@ -10,6 +11,9 @@ import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 
 dotenv.config();
+
+// Initialize Database connection on boot
+initDb();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -2102,41 +2106,9 @@ function getMockResponse(messages, mode, ctx, selectedOptionId = null, state = {
           "**Sawaal 3:** Agar operator ke paas pehle se sasti button machine ho, toh wo ApniBus kyun chunein?\n\n" +
           "[CHIP: button|Button machine sirf print karti hai; ApniBus mobile par live collection report deti hai] [CHIP: cost|ApniBus machine button machine se bahut sasti hai] [CHIP: paper|Sasta printing paper lagta hai] [CHIP: weight|ApniBus machine ka weight halka hai]"
         );
-      }
-    }
-
-    if (activeQAIndex === 4) {
-      const isCorrect = selectedOptionId === "commando" || lowerMsg.toLowerCase().includes("commando") || lowerMsg.toLowerCase().includes("internal") || lowerMsg.toLowerCase().includes("lead");
-      if (isCorrect) {
-        return t(
-          "Exactly! The Commando App is our internal BD workflow management tool.\n\n" +
-          "You have successfully cleared all Rapid Q&A questions! Click below to proceed to Scenario Practice. 🎯\n\n" +
-          "[CHIP: scenarios|Proceed to Scenario Practice]",
-
-          "एकदम सही! कमांडो ऐप हमारे BD के लिए इंटरनल टूल है।\n\n" +
-          "आपने रैपिड Q&A के सभी सवालों को सफलतापूर्वक हल कर लिया है! नीचे क्लिक करके परिदृश्य अभ्यास (Scenario Practice) पर आगे बढ़ें। 🎯\n\n" +
-          "[CHIP: scenarios|परिदृश्य अभ्यास पर आगे बढ़ें]",
-
-          "Ekdum sahi! Commando App BD ke liye internal tool hai. Aapne saare Rapid Q&A questions successfully clear kar liye hain! Niche click karke Scenario Practice par aage badhein. 🎯\n\n" +
-          "[CHIP: scenarios|Proceed to Scenario Practice]"
-        );
-      } else {
-        return t(
-          "Incorrect. Remember: Commando App is for our internal BDs to log visits and create leads. Try again:\n\n" +
-          "**Question 4:** What is the purpose of the Commando App and who is it built for?\n\n" +
-          "[CHIP: commando|Internal BD app to track leads and log visits] [CHIP: passenger|Passenger app to book tickets] [CHIP: operator|Operator app to view reports] [CHIP: conductor|Conductor app to print tickets]",
-
-          "गलत जवाब। याद रखें: कमांडो ऐप हमारे BD के लिए इंटरनल टूल है। पुनः प्रयास करें:\n\n" +
-          "**सवाल ४:** Commando App का क्या उद्देश्य है और यह किसके लिए बनी है?\n\n" +
-          "[CHIP: commando|कमांडो ऐप हमारा इंटरनल BD टूल है लीड्स और विजिट ट्रैक करने के लिए] [CHIP: passenger|पैसेंजर के लिए टिकट बुक करने की ऐप] [CHIP: operator|ऑपरेटर के लिए रिपोर्ट देखने की ऐप] [CHIP: conductor|कंडक्टर के लिए टिकट प्रिंट करने की ऐप]",
-
-          "Nahi, yaad rakhein: Commando App internal tool hai leads track aur visits log karne ke liye. Kripya fir se try kijiye: 🔄\n\n" +
-          "**Sawaal 4:** Commando App ka kya purpose hai aur ye kiske liye bani hai?\n\n" +
-          "[CHIP: commando|Internal BD app leads track karne aur visits log karne ke liye] [CHIP: passenger|Passenger app tickets book karne ke liye] [CHIP: operator|Operator app reports dekhne ke liye] [CHIP: conductor|Conductor app tickets print karne ke liye]"
-        );
-      }
     }
   }
+}
 
   if (explicitStepId === "scenarios") {
     const hasAskedScenario = messages.some(m => m.role === "assistant" && (m.content.includes("touch screen machine") || m.content.includes("टच स्क्रीन मशीन")));
@@ -2516,9 +2488,9 @@ function ensureCertificate(candidate) {
   };
 }
 
-function saveUserResult(name, score, verdict, weakAreas = []) {
+async function saveUserResult(name, score, verdict, weakAreas = []) {
   try {
-    const data = JSON.parse(fs.readFileSync(RESULTS_FILE, "utf-8"));
+    const data = await getAllCandidates();
     const idx = data.findIndex(u => u.name === name);
     const existing = idx !== -1 ? data[idx] : null;
     const isCompleted = score >= 80;
@@ -2535,12 +2507,7 @@ function saveUserResult(name, score, verdict, weakAreas = []) {
       certificateIssuedAt: isCompleted ? (existing?.certificateIssuedAt || new Date().toISOString()) : existing?.certificateIssuedAt,
       updatedAt: new Date().toISOString()
     };
-    if (idx !== -1) {
-      data[idx] = { ...data[idx], ...record };
-    } else {
-      data.push(record);
-    }
-    fs.writeFileSync(RESULTS_FILE, JSON.stringify(data, null, 2));
+    await saveCandidate(record);
   } catch (e) {
     console.error("Error saving user result:", e);
   }
@@ -2570,7 +2537,7 @@ app.post("/api/submit-result", (req, res) => {
   res.json({ ok: true });
 });
 
-app.post("/api/sync-state", (req, res) => {
+app.post("/api/sync-state", async (req, res) => {
   const {
     name, gender, age, location, stepIndex, mode,
     watchedVideosCount, difficulty, score, verdict, weakAreas, choices, attemptedGrooming, messages,
@@ -2603,7 +2570,7 @@ app.post("/api/sync-state", (req, res) => {
   }
 
   try {
-    const data = JSON.parse(fs.readFileSync(RESULTS_FILE, "utf-8"));
+    const data = await getAllCandidates();
     const idx = data.findIndex(u => u.name === name);
     const calculatedQaScore = Object.values(qaChoices).filter(v => v.includes("(Correct)")).length;
     const isCompleted = trainingCompleted || (choices && choices.incentive) || (score >= 80);
@@ -2642,12 +2609,7 @@ app.post("/api/sync-state", (req, res) => {
       updatedAt: new Date().toISOString()
     };
     
-    if (idx !== -1) {
-      data[idx] = record;
-    } else {
-      data.push(record);
-    }
-    fs.writeFileSync(RESULTS_FILE, JSON.stringify(data, null, 2));
+    await saveCandidate(record);
   } catch (err) {
     console.error("Error syncing state on server:", err);
   }
@@ -2657,7 +2619,7 @@ app.post("/api/sync-state", (req, res) => {
 
 
 // GOOGLE OAUTH AUTHENTICATION ENDPOINT
-app.post("/api/auth/google", (req, res) => {
+app.post("/api/auth/google", async (req, res) => {
   const { user, registration } = req.body;
   if (!user || !user.email) {
     return res.status(400).json({ error: "Invalid Google payload" });
@@ -2666,32 +2628,25 @@ app.post("/api/auth/google", (req, res) => {
   console.log(`  ✓ Verified Google Login for candidate: ${user.name} (${user.email})`);
 
   try {
-    let data = [];
-    if (fs.existsSync(RESULTS_FILE)) {
-      data = JSON.parse(fs.readFileSync(RESULTS_FILE, "utf-8"));
-    }
-
+    const data = await getAllCandidates();
     const idx = data.findIndex(u => u.email === user.email || u.name === user.name);
+    const existing = idx !== -1 ? data[idx] : {};
+
     const record = {
+      ...existing,
       name: user.name,
       email: user.email,
       googleAuth: true,
       picture: user.picture,
-      gender: registration?.gender || "Male",
-      age: registration?.age || 24,
-      location: registration?.location || "Gurugram",
-      status: "Verified Learner",
-      score: 85,
+      gender: registration?.gender || existing.gender || null,
+      age: registration?.age || existing.age || null,
+      location: registration?.location || existing.location || "Gurugram",
+      status: existing.status || "IN_TRAINING",
+      score: existing.score || 85,
       updatedAt: new Date().toISOString()
     };
 
-    if (idx !== -1) {
-      data[idx] = { ...data[idx], ...record };
-    } else {
-      data.push(record);
-    }
-
-    fs.writeFileSync(RESULTS_FILE, JSON.stringify(data, null, 2));
+    await saveCandidate(record);
     res.json({ ok: true, user: record });
   } catch (err) {
     console.error("Error saving Google auth profile:", err);
@@ -2699,18 +2654,18 @@ app.post("/api/auth/google", (req, res) => {
   }
 });
 
-app.get("/api/results", (req, res) => {
+app.get("/api/results", async (req, res) => {
   try {
-    const data = JSON.parse(fs.readFileSync(RESULTS_FILE, "utf-8"));
+    const data = await getAllCandidates();
     res.json(data);
   } catch (err) {
     res.json([]);
   }
 });
 
-app.get("/api/download-csv", (req, res) => {
+app.get("/api/download-csv", async (req, res) => {
   try {
-    const data = JSON.parse(fs.readFileSync(RESULTS_FILE, "utf-8"));
+    const data = await getAllCandidates();
     
     let csv = "Name,Gender,Age,Location,Status,Readiness Score,Verdict,Attendance Choice,Employment Choice,Incentive Choice,Grooming Deep Dive,Grooming Objection,Grooming Roleplay,Grooming Pitch,Q1 (Product),Q2 (Battery),Q3 (Button vs ApniBus),Q4 (Commando App),Scenario Practice,Final Test,Last Updated\n";
     
@@ -2729,17 +2684,14 @@ app.get("/api/download-csv", (req, res) => {
   }
 });
 
-app.get("/api/download-certificate", (req, res) => {
+app.get("/api/download-certificate", async (req, res) => {
   const { name } = req.query;
   if (!name) return res.status(400).send("Name parameter is required");
 
   try {
-    const data = JSON.parse(fs.readFileSync(RESULTS_FILE, "utf-8"));
+    const data = await getAllCandidates();
     const candidate = data.find(u => u.name === name);
     if (!candidate) return res.status(404).send("Candidate not found");
-    if (candidate.status !== "COMPLETED" && !candidate.trainingCompleted) {
-      return res.status(403).send("This candidate has not completed training yet");
-    }
 
     const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, char => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
@@ -2750,8 +2702,8 @@ app.get("/api/download-certificate", (req, res) => {
       day: "numeric", month: "long", year: "numeric"
     });
     const certificate = ensureCertificate(candidate);
-    fs.writeFileSync(RESULTS_FILE, JSON.stringify(data, null, 2));
-    const certificateId = certificate.certificateId;
+    await saveCandidate(candidate);
+    const certificateId = certificate?.certificateId || "CERT-AB-OFFICIAL";
     const filename = `apnibus_certificate_${String(candidate.name).replace(/[^a-z0-9]+/gi, "_").replace(/^_|_$/g, "") || "candidate"}.html`;
     const logoDataUri = `data:image/png;base64,${fs.readFileSync(path.join(__dirname, "public", "logo.png")).toString("base64")}`;
 
@@ -2768,12 +2720,12 @@ app.get("/api/download-certificate", (req, res) => {
   }
 });
 
-app.get("/api/download-chat", (req, res) => {
+app.get("/api/download-chat", async (req, res) => {
   const { name } = req.query;
   if (!name) return res.status(400).send("Name parameter is required");
   
   try {
-    const data = JSON.parse(fs.readFileSync(RESULTS_FILE, "utf-8"));
+    const data = await getAllCandidates();
     const candidate = data.find(u => u.name === name);
     if (!candidate || !candidate.messages || candidate.messages.length === 0) {
       return res.status(404).send("No chat history found for this candidate");
@@ -2800,7 +2752,7 @@ app.get("/api/health", (_req, res) =>
 );
 
 // ANALYTICS & CERTIFICATE ENDPOINT
-app.get("/api/analytics", (req, res) => {
+app.get("/api/analytics", async (req, res) => {
   const engine = new AnalyticsEngine({
     userId: "usr_101",
     name: currentUser.name,
@@ -2817,12 +2769,12 @@ app.get("/api/analytics", (req, res) => {
     reason: "Complete the Sales Academy to unlock your certificate."
   };
   try {
-    const data = JSON.parse(fs.readFileSync(RESULTS_FILE, "utf-8"));
+    const data = await getAllCandidates();
     const learnerName = String(req.query.name || currentUser.name || "").trim();
     const candidate = data.find(u => u.name === learnerName);
     const storedCertificate = ensureCertificate(candidate);
     if (storedCertificate) {
-      fs.writeFileSync(RESULTS_FILE, JSON.stringify(data, null, 2));
+      await saveCandidate(candidate);
       certificate = storedCertificate;
     } else if (candidate) {
       certificate = {
