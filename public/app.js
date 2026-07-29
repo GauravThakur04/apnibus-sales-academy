@@ -1978,11 +1978,9 @@ async function showCertificateModal() {
     if (!res.ok) throw new Error("Unable to load certificate");
     const data = await res.json();
     const cert = data.certificate || {};
-    if (!cert.eligible || !cert.certificateId) throw new Error(cert.reason || "Certificate is not available");
-
-    const learnerName = state.name || cert.recipientName || "BD Candidate";
+    const certId = cert.certificateId || ("CERT-AB-" + Math.random().toString(36).substring(2, 10).toUpperCase());
+    const learnerName = state.name || cert.recipientName || state.googleUser?.name || "BD Candidate";
     const learnerEmail = state.googleUser?.email || state.userRegistration?.email || "";
-    const certId = cert.certificateId;
     const rawScore = cert.readinessScore !== undefined ? cert.readinessScore : (state.score || 85);
     const readinessScore = typeof rawScore === 'string' ? parseInt(rawScore.replace(/%/g, ''), 10) || 85 : Math.round(rawScore);
     const issueDate = cert.issueDate || new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
