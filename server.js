@@ -87,7 +87,15 @@ console.log(
 );
 
 app.use(express.json({ limit: "2mb" }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), {
+  maxAge: "7d",
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith(".mp4")) {
+      res.setHeader("Accept-Ranges", "bytes");
+      res.setHeader("Cache-Control", "public, max-age=604800, immutable");
+    }
+  }
+}));
 
 app.get("/manager", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "manager.html"));
@@ -2516,10 +2524,14 @@ function ensureCertificate(candidate) {
   const scoreVal = Number(candidate.score) > 0 ? Number(candidate.score) : calculateCandidateScore(candidate);
   candidate.score = scoreVal;
 
+  const dateStr = candidate.certificateIssuedAt instanceof Date 
+    ? candidate.certificateIssuedAt.toISOString() 
+    : String(candidate.certificateIssuedAt || new Date().toISOString());
+
   return {
     eligible: true,
     certificateId: candidate.certificateId,
-    issueDate: candidate.certificateIssuedAt.slice(0, 10),
+    issueDate: dateStr.slice(0, 10),
     recipientName: candidate.name,
     title: "Certified Business Development Representative",
     issuer: "ApniBus Sales Academy",
@@ -2629,7 +2641,10 @@ app.post("/api/sync-state", async (req, res) => {
       attemptedGrooming: attemptedGrooming || existing?.attemptedGrooming || {}
     };
 
-    let finalScore = (score && score > 0) ? score : calculateCandidateScore(tempRecord);
+    let finalScore = calculateCandidateScore(tempRecord);
+    if (score && score > 0 && score !== 85) {
+      finalScore = score;
+    }
     const record = {
       ...existing,
       name,
