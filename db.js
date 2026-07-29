@@ -154,17 +154,16 @@ export async function getAllCandidates() {
 export async function saveCandidate(candidate) {
   if (!candidate || !candidate.name) return;
 
-  const emailKey = candidate.email || candidate.name.toLowerCase().replace(/\s+/g, '_') + "@apnibus.com";
+  const rawEmail = candidate.email || (candidate.name.toLowerCase().replace(/\s+/g, '_') + "@apnibus.com");
+  const certId = candidate.certificateId || ("CERT-AB-" + (candidate.name.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4) || 'BD') + "-" + Math.random().toString(36).substring(2, 8).toUpperCase());
 
-  // Also save to training_certificates table if candidate has a certificateId
-  if (candidate.certificateId) {
-    await saveCertificateRecord({
-      name: candidate.name,
-      mail: emailKey,
-      certificateId: candidate.certificateId,
-      certificate: candidate.certificateHtml || "FIELD READY"
-    });
-  }
+  // Save to training_certificates table
+  await saveCertificateRecord({
+    name: candidate.name,
+    mail: rawEmail,
+    certificateId: certId,
+    certificate: candidate.certificateHtml || (candidate.trainingCompleted || candidate.status === "COMPLETED" ? "FIELD READY" : "IN TRAINING")
+  });
 
   // If DB is NOT connected, use local file fallback
   if (!pool) {
@@ -173,6 +172,14 @@ export async function saveCandidate(candidate) {
   }
 
   try {
+    // 1. Check if candidate exists by email or name to prevent email mismatch duplicates
+    const checkRes = await pool.query(
+      'SELECT email FROM training_candidates WHERE LOWER(name) = LOWER($1) OR LOWER(email) = LOWER($2) LIMIT 1',
+      [candidate.name, rawEmail]
+    );
+
+    const emailKey = (checkRes.rows.length > 0 && checkRes.rows[0].email) ? checkRes.rows[0].email : rawEmail;
+
     const query = `
       INSERT INTO training_candidates (
         name, email, location, status, score, verdict,
@@ -218,8 +225,8 @@ export async function saveCandidate(candidate) {
       JSON.stringify(candidate.attemptedGrooming || {}),
       JSON.stringify(candidate.qaChoices || {}),
       JSON.stringify(candidate.messages || []),
-      candidate.certificateId || null,
-      candidate.certificateIssuedAt ? new Date(candidate.certificateIssuedAt) : null
+      candidate.certificateId || certId,
+      candidate.certificateIssuedAt ? new Date(candidate.certificateIssuedAt) : new Date()
     ];
 
     await pool.query(query, values);

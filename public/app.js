@@ -435,6 +435,7 @@ function syncWithBackend() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           name: state.name,
+          email: state.googleUser?.email || state.userRegistration?.email || "",
           gender: state.userRegistration?.gender,
           age: state.userRegistration?.age,
           location: state.userRegistration?.location,
