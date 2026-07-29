@@ -54,8 +54,8 @@ export async function initDb() {
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE,
-        gender VARCHAR(50) DEFAULT 'Male',
-        age VARCHAR(20) DEFAULT '24',
+        gender VARCHAR(50) DEFAULT NULL,
+        age VARCHAR(20) DEFAULT NULL,
         location VARCHAR(255) DEFAULT 'Field',
         status VARCHAR(50) DEFAULT 'IN_TRAINING',
         score INT DEFAULT 0,
@@ -74,6 +74,10 @@ export async function initDb() {
         created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
       );
+      ALTER TABLE training_candidates ALTER COLUMN gender DROP DEFAULT;
+      ALTER TABLE training_candidates ALTER COLUMN age DROP DEFAULT;
+      ALTER TABLE training_candidates ALTER COLUMN gender SET DEFAULT NULL;
+      ALTER TABLE training_candidates ALTER COLUMN age SET DEFAULT NULL;
       CREATE INDEX IF NOT EXISTS idx_training_candidates_email ON training_candidates(email);
       CREATE INDEX IF NOT EXISTS idx_training_candidates_name ON training_candidates(name);
     `;
@@ -153,8 +157,8 @@ export async function saveCandidate(candidate) {
     const values = [
       candidate.name,
       emailKey,
-      candidate.gender || 'Male',
-      candidate.age || '24',
+      candidate.gender || null,
+      candidate.age || null,
       candidate.location || 'Field',
       candidate.status || 'IN_TRAINING',
       candidate.score || 0,
