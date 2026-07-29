@@ -697,9 +697,7 @@
           <td style="min-width: 140px;">
             <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
               <a href="/api/download-certificate?name=${encodeURIComponent(item.name)}" target="_blank" class="btn-action" title="Download readiness certificate">🏆 Download Certificate</a>
-              ${item.messages && item.messages.length > 0
-                ? `<a href="/api/download-chat?name=${encodeURIComponent(item.name)}" class="btn-action" title="Download Chat History CSV">📥 Download Chats</a>`
-                : ''}
+              <a href="/api/download-chat?name=${encodeURIComponent(item.name)}" class="btn-action" title="Download Chat History CSV" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3);">📥 Download Chats</a>
             </div>
           </td>
         </tr>

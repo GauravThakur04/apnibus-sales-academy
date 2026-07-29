@@ -425,11 +425,44 @@ function load() {
   }
   catch { return fresh(); }
 }
+function calculateLiveScore() {
+  const vCount = state.watched ? state.watched.length * 2 : 0;
+  const qCount = (state.messages || []).filter(m => m.role === "user" && m.content && (
+    m.content.toLowerCase().includes("pos ticketing machine") ||
+    m.content.toLowerCase().includes("battery jo bina charging") || m.content.toLowerCase().includes("battery that runs all day") ||
+    m.content.toLowerCase().includes("button machine only prints") || m.content.toLowerCase().includes("live reports") ||
+    m.content.toLowerCase().includes("internal bd app") || m.content.toLowerCase().includes("internal tool") ||
+    m.content.toLowerCase().includes("show simple ui") ||
+    m.content.toLowerCase().includes("free business app and leakage") || m.content.toLowerCase().includes("close_leakage")
+  )).length;
+
+  const att = state.attemptedGrooming || {};
+  const vScore = Math.min(40, (vCount / 8) * 40);
+  const qScore = Math.min(40, (qCount / 6) * 40);
+  let gScore = 0;
+  if (att.roleplay) gScore += 10;
+  if (att.objection) gScore += 5;
+  if (att.deepDive) gScore += 5;
+  const baseBonus = (state.stepIndex >= 11 || state.verdict === "FIELD READY") ? 15 : 0;
+
+  let hash = 0;
+  const nStr = String(state.name || "learner");
+  for (let i = 0; i < nStr.length; i++) hash = (hash << 5) - hash + nStr.charCodeAt(i);
+  const jitter = (Math.abs(hash) % 7) - 3;
+
+  let total = Math.round(vScore + qScore + gScore + baseBonus + jitter);
+  total = Math.max(48, Math.min(96, total));
+  state.score = total;
+  state.bestScore = total;
+  return total;
+}
+
 let syncTimeout = null;
 function syncWithBackend() {
   if (syncTimeout) clearTimeout(syncTimeout);
   syncTimeout = setTimeout(async () => {
     try {
+      const currentDynamicScore = calculateLiveScore();
       await fetch("/api/sync-state", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -443,7 +476,7 @@ function syncWithBackend() {
           mode: state.mode,
           watchedVideosCount: state.watched ? state.watched.length : 0,
           difficulty: state.difficulty || "Medium",
-          score: state.bestScore || 0,
+          score: currentDynamicScore,
           verdict: state.verdict || "NOT YET CERTIFIED",
           weakAreas: state.learningMemory?.weakAreas || [],
           choices: {
@@ -571,7 +604,7 @@ function setVideoPlayerSource(src) {
     player.innerHTML = `<div class="novid-placeholder"><h4>🎥 Video Coming Soon</h4><p>This video is still in production. Please read the Presentation Slides (PPT) on the right to learn about this module!</p></div>`;
     return;
   }
-  player.innerHTML = `<video controls preload="metadata"><source src="${src}" type="video/mp4"></video>`;
+  player.innerHTML = `<video controls preload="auto" playsinline webkit-playsinline><source src="${src}" type="video/mp4"></video>`;
 }
 
 function showVideo(i) {
