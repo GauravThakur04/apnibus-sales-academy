@@ -437,21 +437,26 @@ function calculateLiveScore() {
   )).length;
 
   const att = state.attemptedGrooming || {};
+  // 1. Videos (max 40%) - 8 quiz questions
   const vScore = Math.min(40, (vCount / 8) * 40);
-  const qScore = Math.min(40, (qCount / 6) * 40);
+
+  // 2. Grooming & Roleplay (max 20%)
   let gScore = 0;
   if (att.roleplay) gScore += 10;
   if (att.objection) gScore += 5;
   if (att.deepDive) gScore += 5;
-  const baseBonus = (state.stepIndex >= 11 || state.verdict === "FIELD READY") ? 15 : 0;
 
-  let hash = 0;
-  const nStr = String(state.name || "learner");
-  for (let i = 0; i < nStr.length; i++) hash = (hash << 5) - hash + nStr.charCodeAt(i);
-  const jitter = (Math.abs(hash) % 7) - 3;
+  // 3. Q&A Prep (max 25%) - 6 questions
+  const qScore = Math.min(25, (qCount / 6) * 25);
 
-  let total = Math.round(vScore + qScore + gScore + baseBonus + jitter);
-  total = Math.max(48, Math.min(96, total));
+  // 4. Policies (max 15%) - 5% each for Attendance, Employment, Incentives
+  let pScore = 0;
+  if (state.stepIndex >= 11 || state.attendancePassed) pScore += 5;
+  if (state.stepIndex >= 12 || state.employmentPassed) pScore += 5;
+  if (state.stepIndex >= 13 || state.incentivePassed) pScore += 5;
+
+  let total = Math.round(vScore + gScore + qScore + pScore);
+  total = Math.max(0, Math.min(100, total));
   state.score = total;
   state.bestScore = total;
   return total;
@@ -577,7 +582,9 @@ async function initVideos() {
 }
 
 function isVideoUnlocked(i) {
-  return i <= state.stepIndex;
+  if (i === 0) return true;
+  const prevVid = VIDEOS[i - 1];
+  return Boolean(prevVid && state.watched.includes(prevVid.id));
 }
 
 function renderVList() {
@@ -598,13 +605,109 @@ function renderVList() {
 }
 
 
-function setVideoPlayerSource(src) {
+function bindVideoRestrictions(videoElem, vId) {
+  if (!videoElem || !vId) return;
+  const isAlreadyWatched = state.watched.includes(vId);
+  const doneBtn = $("doneBtn");
+
+  if (isAlreadyWatched) {
+    if (doneBtn) {
+      doneBtn.disabled = false;
+      doneBtn.classList.add("done");
+      doneBtn.textContent = "✓ 50%+ Watched! 📌 Please Review PPT Slides → Proceed to Questions";
+    }
+    return;
+  }
+
+  let maxTimeWatched = 0;
+  if (doneBtn) {
+    doneBtn.disabled = true;
+    doneBtn.classList.remove("done");
+    doneBtn.textContent = "🔒 Watch at least 50% of video to unlock (0%/50%)";
+  }
+
+  // Prevent seeking ahead of watched duration
+  videoElem.addEventListener("seeking", () => {
+    if (videoElem.currentTime > maxTimeWatched + 2 && !state.watched.includes(vId)) {
+      videoElem.currentTime = maxTimeWatched;
+      toast("⚠️ Please watch at least 50% of the video without skipping!");
+    }
+  });
+
+  videoElem.addEventListener("timeupdate", () => {
+    if (!videoElem.duration) return;
+    if (videoElem.currentTime > maxTimeWatched) {
+      maxTimeWatched = videoElem.currentTime;
+    }
+
+    const pct = Math.floor((videoElem.currentTime / videoElem.duration) * 100);
+    if (!state.watched.includes(vId)) {
+      if (doneBtn && doneBtn.disabled) {
+        doneBtn.textContent = `🔒 Watch at least 50% of video to unlock (${pct}%/50%)`;
+      }
+      if (pct >= 50 || videoElem.currentTime >= videoElem.duration / 2) {
+        unlockVideoCompletion(vId);
+      }
+    }
+  });
+
+  videoElem.addEventListener("ended", () => {
+    unlockVideoCompletion(vId);
+  });
+}
+
+function unlockVideoCompletion(vidId) {
+  if (!state.watched.includes(vidId)) {
+    state.watched.push(vidId);
+    save();
+    syncWithBackend();
+    renderVList();
+  }
+
+  const vstage = document.querySelector(".vstage");
+  const pptContainer = $("pptContainer");
+
+  if (vstage) {
+    vstage.classList.remove("video-mode");
+    vstage.classList.add("ppt-mode");
+  }
+  if (pptContainer) {
+    pptContainer.classList.remove("hidden-ppt");
+    pptContainer.style.display = "flex";
+  }
+
+  const doneBtn = $("doneBtn");
+  if (doneBtn) {
+    doneBtn.disabled = false;
+    doneBtn.classList.add("done");
+    doneBtn.textContent = "✓ 50%+ Watched! 📌 Please Review PPT Slides → Proceed to Questions";
+  }
+
+  // Toast notice with explicit instruction to review PPT slides
+  toast("📌 Instruction: 50% video watched! Please make sure to review the Presentation Slides (PPT) as well.");
+
+  // Smooth scroll to PPT container
+  if (pptContainer) {
+    pptContainer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+}
+
+function setVideoPlayerSource(src, vId) {
   const player = $("player");
   if (!src) {
     player.innerHTML = `<div class="novid-placeholder"><h4>🎥 Video Coming Soon</h4><p>This video is still in production. Please read the Presentation Slides (PPT) on the right to learn about this module!</p></div>`;
+    const doneBtn = $("doneBtn");
+    if (doneBtn) {
+      doneBtn.disabled = false;
+      doneBtn.textContent = "I've read the slides — ask me the questions";
+    }
     return;
   }
   player.innerHTML = `<video controls preload="auto" playsinline webkit-playsinline><source src="${src}" type="video/mp4"></video>`;
+  const videoElem = player.querySelector("video");
+  if (videoElem) {
+    bindVideoRestrictions(videoElem, vId || (VIDEOS[state.current] ? VIDEOS[state.current].id : ""));
+  }
 }
 
 function showVideo(i) {
@@ -612,38 +715,45 @@ function showVideo(i) {
   if (!v) return;
   state.current = i;
 
-  // Reset mobile tabs to video by default
-  const mTabV = $("mTabVideo");
-  const mTabS = $("mTabSlides");
-  if (mTabV && mTabS) {
-    mTabV.classList.add("active");
-    mTabS.classList.remove("active");
-    const vstage = document.querySelector(".vstage");
-    if (vstage) vstage.classList.remove("show-slides");
-  }
+  const vstage = document.querySelector(".vstage");
+  const pptContainer = $("pptContainer");
+  const pptFileName = $("pptFileName");
+  const openBtn = $("pdfOpenNativeBtn");
+  const pptObjectViewer = $("pptObjectViewer");
+  const pptEmbedViewer = $("pptEmbedViewer");
+  const done = state.watched.includes(v.id);
 
+  if (!done) {
+    if (vstage) {
+      vstage.classList.add("video-mode");
+      vstage.classList.remove("ppt-mode");
+    }
+    if (pptContainer) {
+      pptContainer.classList.add("hidden-ppt");
+      pptContainer.style.display = "none";
+    }
+  } else {
+    if (vstage) {
+      vstage.classList.remove("video-mode");
+      vstage.classList.add("ppt-mode");
+    }
+    if (pptContainer) {
+      pptContainer.classList.remove("hidden-ppt");
+      pptContainer.style.display = "flex";
+    }
+  }
 
   $("vNum").textContent = `${i + 1} / ${VIDEOS.length}`;
   $("vTitle").textContent = v.title;
   $("vSub").textContent = v.subtitle || "";
   $("vCovers").innerHTML = (v.covers || []).map((c) => `<li>${c}</li>`).join("");
 
-  // Handle PPT / PDF Slide Deck
-  const pptContainer = $("pptContainer");
-  const pptFileName = $("pptFileName");
-  const openBtn = $("pdfOpenNativeBtn");
-  const pptObjectViewer = $("pptObjectViewer");
-  const pptEmbedViewer = $("pptEmbedViewer");
-
   if (v.ppt) {
     const pdfPath = v.ppt + "#toolbar=1";
-    if (pptContainer) pptContainer.style.display = "flex";
     if (pptFileName) pptFileName.textContent = v.ppt.split('/').pop();
     if (openBtn) openBtn.href = v.ppt;
     if (pptObjectViewer) pptObjectViewer.data = pdfPath;
     if (pptEmbedViewer) pptEmbedViewer.src = pdfPath;
-  } else {
-    if (pptContainer) pptContainer.style.display = "none";
   }
 
   // Handle Video Parts
@@ -655,19 +765,27 @@ function showVideo(i) {
       btn.onclick = () => {
         partsContainer.querySelectorAll(".part-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
-        setVideoPlayerSource(btn.dataset.src);
+        setVideoPlayerSource(btn.dataset.src, v.id);
       };
     });
-    setVideoPlayerSource(v.parts[0].src);
+    setVideoPlayerSource(v.parts[0].src, v.id);
   } else {
-    setVideoPlayerSource(v.src);
+    setVideoPlayerSource(v.src, v.id);
   }
 
-  const done = state.watched.includes(v.id);
   const btn = $("doneBtn");
-  btn.classList.toggle("done", done);
-  btn.textContent = done ? "✓ Completed — rewatch anytime" : "I've watched this — ask me the questions";
-  btn.disabled = false;
+  if (btn) {
+    btn.classList.toggle("done", done);
+    if (done) {
+      btn.disabled = false;
+      btn.removeAttribute("disabled");
+      btn.textContent = "✓ 50%+ Watched! 📌 Please Review PPT Slides → Proceed to Questions";
+    } else {
+      btn.disabled = true;
+      btn.setAttribute("disabled", "true");
+      btn.textContent = "🔒 Watch at least 50% of video to unlock (0%/50%)";
+    }
+  }
 
   // Track viewing status dynamically
   if (window.innerWidth > 850) {
@@ -704,6 +822,12 @@ const missingMsg = (v) => `<div class="novid"><b>Video not added yet</b>
 $("doneBtn").onclick = () => {
   const v = VIDEOS[state.current];
   if (!v) return;
+
+  const btn = $("doneBtn");
+  if (btn.disabled || btn.getAttribute("disabled") !== null || !state.watched.includes(v.id)) {
+    toast("🔒 Please watch at least 50% of the video to unlock questions!");
+    return;
+  }
 
   state.viewedVideo[v.id] = true;
   state.viewedPPT[v.id] = true;
@@ -1369,20 +1493,8 @@ document.querySelectorAll(".phase").forEach((btn) => {
     const mode = btn.dataset.mode;
     const targetStep = STEPS.findIndex((s) => s.phase === mode);
     if (state.stepIndex < targetStep) {
-      const confirmUnlock = confirm("This section is locked. Would you like to unlock it to see how it is made? / यह सेक्शन लॉक है। क्या आप इसे देखने के लिए अनलॉक करना चाहते हैं?");
-      if (confirmUnlock) {
-        state.stepIndex = targetStep;
-        const currentStep = STEPS[state.stepIndex];
-        if (currentStep) {
-          state.mode = currentStep.phase;
-        }
-        save();
-        syncGates();
-        renderToolbar();
-        updateSidebarStep();
-      } else {
-        return;
-      }
+      toast("🔒 This section is locked. Please watch the videos and complete previous modules first!");
+      return;
     }
     if (mode === "videos") goVideos();
     else if (mode === "attendance") goAttendance();
@@ -2092,9 +2204,9 @@ async function showCertificateModal() {
           </div>
         </div>
 
-        <!-- Action Buttons (hidden when printing) -->
+        <!-- Action Buttons -->
         <div class="no-print" style="display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap;">
-          <button id="downloadCertBtn" style="background:#10b981;color:#000;font-weight:700;padding:12px 26px;border-radius:10px;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;">📥 Download / Print Certificate</button>
+          <button id="downloadCertBtn" style="background:#10b981;color:#000;font-weight:700;padding:12px 26px;border-radius:10px;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;">📥 Download Certificate</button>
           <button id="closeCertModalBtn" style="background:rgba(255,255,255,0.1);color:#fff;font-weight:700;padding:12px 22px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);cursor:pointer;font-size:14px;">✕ Close</button>
         </div>
       </div>
@@ -2104,7 +2216,9 @@ async function showCertificateModal() {
 
     $("closeCertX").onclick = () => modal.style.display = "none";
     $("closeCertModalBtn").onclick = () => modal.style.display = "none";
-    $("downloadCertBtn").onclick = () => window.print();
+    $("downloadCertBtn").onclick = () => {
+      window.location.href = `/api/download-certificate?name=${encodeURIComponent(learnerName)}`;
+    };
 
   } catch (e) {
     toast("Unable to generate certificate. Please complete training first!");

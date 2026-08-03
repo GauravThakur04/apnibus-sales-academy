@@ -620,17 +620,6 @@
     }
 
     resultsTableBody.innerHTML = filtered.map(item => {
-      let badgeClass = "status-training";
-      let statusLabel = "In Training";
-
-      if (item.trainingCompleted || item.status === "COMPLETED") {
-        badgeClass = "status-completed";
-        statusLabel = "TRAINING COMPLETE";
-      } else if (item.status === "FAILED") {
-        badgeClass = "status-failed";
-        statusLabel = "Retraining Req";
-      }
-
       const att = item.attemptedGrooming || { deepDive: false, objection: false, roleplay: false, pitchCorrection: false };
       const videoScore = item.videoCorrectCount || 0;
       const qaScore = item.qaCorrectCount || 0;
@@ -639,17 +628,31 @@
       let scoreVal = Number(item.score) || 0;
       if (!scoreVal || scoreVal === 0) {
         const vPart = Math.min(40, (videoScore / 8) * 40);
-        const qPart = Math.min(40, (qaScore / 6) * 40);
         let gPart = 0;
         if (att.roleplay) gPart += 10;
         if (att.objection) gPart += 5;
         if (att.deepDive) gPart += 5;
-        const bPart = (item.trainingCompleted || item.status === "COMPLETED") ? 15 : 0;
-        let nameSum = 0;
-        const nStr = String(item.name || "learner");
-        for (let i = 0; i < nStr.length; i++) nameSum += nStr.charCodeAt(i);
-        const jitter = (nameSum % 7) - 3;
-        scoreVal = Math.max(48, Math.min(96, Math.round(vPart + qPart + gPart + bPart + jitter)));
+        const qPart = Math.min(25, (qaScore / 6) * 25);
+        let pPart = 0;
+        if (item.stepIndex >= 11 || item.attendancePassed) pPart += 5;
+        if (item.stepIndex >= 12 || item.employmentPassed) pPart += 5;
+        if (item.stepIndex >= 13 || item.incentivePassed) pPart += 5;
+
+        scoreVal = Math.max(0, Math.min(100, Math.round(vPart + gPart + qPart + pPart)));
+      }
+
+      let badgeClass = "status-training";
+      let statusLabel = "In Training";
+
+      if (scoreVal >= 80) {
+        badgeClass = "status-completed";
+        statusLabel = "FIELD READY 🎉";
+      } else if (scoreVal > 0 || item.trainingCompleted || item.status === "COMPLETED") {
+        badgeClass = "status-completed";
+        statusLabel = "TRAINING COMPLETE";
+      } else if (item.status === "FAILED") {
+        badgeClass = "status-failed";
+        statusLabel = "Retraining Req";
       }
 
       const meterColor = scoreVal >= 80 ? 'var(--green)' : scoreVal > 0 ? 'var(--amber)' : 'var(--text-muted)';
