@@ -672,15 +672,25 @@ function unlockVideoCompletion(vidId) {
   if (vstage) {
     vstage.classList.remove("video-mode");
     vstage.classList.add("ppt-mode");
+    vstage.classList.add("show-slides");
   }
   if (pptContainer) {
     pptContainer.classList.remove("hidden-ppt");
     pptContainer.style.display = "flex";
   }
 
+  // Sync mobile tab header buttons
+  const mTabVideo = $("mTabVideo");
+  const mTabSlides = $("mTabSlides");
+  if (mTabVideo && mTabSlides) {
+    mTabSlides.classList.add("active");
+    mTabVideo.classList.remove("active");
+  }
+
   const doneBtn = $("doneBtn");
   if (doneBtn) {
     doneBtn.disabled = false;
+    doneBtn.removeAttribute("disabled");
     doneBtn.classList.add("done");
     doneBtn.textContent = "✓ 50%+ Watched! 📌 Please Review PPT Slides → Proceed to Questions";
   }
@@ -701,11 +711,12 @@ function setVideoPlayerSource(src, vId) {
     const doneBtn = $("doneBtn");
     if (doneBtn) {
       doneBtn.disabled = false;
+      doneBtn.removeAttribute("disabled");
       doneBtn.textContent = "I've read the slides — ask me the questions";
     }
     return;
   }
-  player.innerHTML = `<video controls preload="auto" playsinline webkit-playsinline><source src="${src}" type="video/mp4"></video>`;
+  player.innerHTML = `<video controls preload="auto" playsinline webkit-playsinline x5-playsinline><source src="${src}" type="video/mp4"></video>`;
   const videoElem = player.querySelector("video");
   if (videoElem) {
     bindVideoRestrictions(videoElem, vId || (VIDEOS[state.current] ? VIDEOS[state.current].id : ""));

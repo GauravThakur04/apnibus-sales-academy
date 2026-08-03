@@ -745,17 +745,20 @@ button{font-family:inherit;cursor:pointer}
     width: 100% !important;
   }
   
-  /* By default on mobile, hide the right panel (slides) */
-  .vstage:not(.show-slides) .vright-panel {
-    display: none !important;
-  }
-  
-  /* If show-slides class is active, hide the left panel (video) and show right */
+  /* Mobile sequential flow */
+  .vstage.ppt-mode .vleft-panel,
   .vstage.show-slides .vleft-panel {
     display: none !important;
   }
+  
+  .vstage.ppt-mode .vright-panel,
   .vstage.show-slides .vright-panel {
     display: flex !important;
+    width: 100% !important;
+  }
+
+  .vstage.video-mode:not(.show-slides):not(.ppt-mode) .vright-panel {
+    display: none !important;
   }
 }
 
