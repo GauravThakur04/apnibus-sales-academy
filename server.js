@@ -2506,7 +2506,11 @@ function calculateCandidateScore(record) {
   if (stepIdx >= 13 || record.incentivePassed) pScore += 5;
 
   let total = Math.round(vScore + gScore + qScore + pScore);
-  return Math.max(0, Math.min(100, total));
+  if (total === 0) return 0;
+
+  // Add +18% Readiness Booster so scores are elevated (+15-20%) as requested
+  total = Math.max(0, Math.min(100, total + 18));
+  return total;
 }
 
 function ensureCertificate(candidate) {

@@ -456,7 +456,9 @@ function calculateLiveScore() {
   if (state.stepIndex >= 13 || state.incentivePassed) pScore += 5;
 
   let total = Math.round(vScore + gScore + qScore + pScore);
-  total = Math.max(0, Math.min(100, total));
+  if (total > 0) {
+    total = Math.max(0, Math.min(100, total + 18));
+  }
   state.score = total;
   state.bestScore = total;
   return total;

@@ -638,7 +638,8 @@
         if (item.stepIndex >= 12 || item.employmentPassed) pPart += 5;
         if (item.stepIndex >= 13 || item.incentivePassed) pPart += 5;
 
-        scoreVal = Math.max(0, Math.min(100, Math.round(vPart + gPart + qPart + pPart)));
+        let rawVal = Math.round(vPart + gPart + qPart + pPart);
+        scoreVal = rawVal > 0 ? Math.max(0, Math.min(100, rawVal + 18)) : 0;
       }
 
       let badgeClass = "status-training";
