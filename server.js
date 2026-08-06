@@ -2506,7 +2506,11 @@ function calculateCandidateScore(record) {
   if (stepIdx >= 13 || record.incentivePassed) pScore += 5;
 
   let total = Math.round(vScore + gScore + qScore + pScore);
-  return Math.max(0, Math.min(100, total));
+  if (total === 0) return 0;
+
+  // Add +18% Readiness Booster so scores are elevated (+15-20%) as requested
+  total = Math.max(0, Math.min(100, total + 18));
+  return total;
 }
 
 function ensureCertificate(candidate) {
@@ -2621,26 +2625,29 @@ app.post("/api/sync-state", async (req, res) => {
     const data = await getAllCandidates();
     const idx = data.findIndex(u => (u.name && u.name.toLowerCase() === name.toLowerCase()) || (email && u.email && u.email.toLowerCase() === email.toLowerCase()));
     const calculatedQaScore = Object.values(qaChoices).filter(v => v.includes("(Correct)")).length;
-    const isCompleted = trainingCompleted || (choices && choices.incentive) || (score >= 80);
-
     const vScore = videoCorrectCount !== undefined ? videoCorrectCount : ((watchedVideosCount || 0) * 2);
     const qScore = qaCorrectCount !== undefined ? qaCorrectCount : calculatedQaScore;
+    const groomAtt = attemptedGrooming || existing?.attemptedGrooming || {};
+    
+    // Strict completion definition: must have finished all modules
+    const isCompleted = Boolean((trainingCompleted === true || stepIndex >= 13) && vScore >= 8 && qScore >= 6 && groomAtt.roleplay);
 
     const existing = idx !== -1 ? data[idx] : null;
     const tempRecord = {
       ...existing,
       name,
       email: email || existing?.email || currentUser.email || "",
-      trainingCompleted: isCompleted ? true : false,
-      videoCorrectCount: videoCorrectCount !== undefined ? videoCorrectCount : ((watchedVideosCount || 0) * 2),
-      qaCorrectCount: qaCorrectCount !== undefined ? qaCorrectCount : calculatedQaScore,
-      attemptedGrooming: attemptedGrooming || existing?.attemptedGrooming || {}
+      stepIndex: stepIndex !== undefined ? stepIndex : (existing?.stepIndex || 0),
+      trainingCompleted: isCompleted,
+      videoCorrectCount: vScore,
+      qaCorrectCount: qScore,
+      attemptedGrooming: groomAtt
     };
 
     let finalScore = calculateCandidateScore(tempRecord);
-    if (score && score > 0 && score !== 85) {
-      finalScore = score;
-    }
+    const recordStatus = isCompleted ? "COMPLETED" : "IN_TRAINING";
+    const recordVerdict = (isCompleted && finalScore >= 80) ? "FIELD READY 🎉" : "IN TRAINING";
+
     const record = {
       ...existing,
       name,
@@ -2648,15 +2655,15 @@ app.post("/api/sync-state", async (req, res) => {
       gender: gender || currentUser.gender,
       age: age || currentUser.age,
       location: location || currentUser.location,
-      status: isCompleted ? "COMPLETED" : (finalScore > 0 ? "FAILED" : "IN_TRAINING"),
+      status: recordStatus,
       score: finalScore,
-      verdict: verdict || "IN TRAINING",
-      trainingCompleted: isCompleted ? true : false,
-      videoCorrectCount: videoCorrectCount !== undefined ? videoCorrectCount : ((watchedVideosCount || 0) * 2),
-      qaCorrectCount: qaCorrectCount !== undefined ? qaCorrectCount : calculatedQaScore,
+      verdict: recordVerdict,
+      trainingCompleted: isCompleted,
+      videoCorrectCount: vScore,
+      qaCorrectCount: qScore,
       weakAreas: weakAreas || [],
       choices: choices || { attendance: "", employment: "", incentive: "" },
-      attemptedGrooming: attemptedGrooming || { deepDive: false, objection: false, roleplay: false, pitchCorrection: false },
+      attemptedGrooming: groomAtt,
       qaChoices,
       messages: messages || [],
       certificateId: isCompleted ? (existing?.certificateId || createCertificateId()) : existing?.certificateId,

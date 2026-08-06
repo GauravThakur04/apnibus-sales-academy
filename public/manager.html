@@ -488,6 +488,14 @@
       <div class="val" id="statTotal">0</div>
       <div class="stat-meta">Enrolled in Sales Academy</div>
     </div>
+    <div class="stat-card" style="border-top: 3px solid var(--amber);">
+      <div class="stat-header">
+        <span class="label" style="color: var(--amber);">In Training (Pending)</span>
+        <span class="stat-icon">⏳</span>
+      </div>
+      <div class="val" id="statTraining" style="color: var(--amber);">0</div>
+      <div class="stat-meta">Active Module Progression</div>
+    </div>
     <div class="stat-card" style="border-top: 3px solid var(--cyan);">
       <div class="stat-header">
         <span class="label" style="color: var(--cyan);">Training Completed</span>
@@ -502,15 +510,7 @@
         <span class="stat-icon">🏆</span>
       </div>
       <div class="val" id="statReady" style="color: var(--green);">0</div>
-      <div class="stat-meta">Readiness Score 80%+</div>
-    </div>
-    <div class="stat-card" style="border-top: 3px solid var(--amber);">
-      <div class="stat-header">
-        <span class="label" style="color: var(--amber);">In Training</span>
-        <span class="stat-icon">⏳</span>
-      </div>
-      <div class="val" id="statTraining" style="color: var(--amber);">0</div>
-      <div class="stat-meta">Active Module Progression</div>
+      <div class="stat-meta">Certified Subset (Score 80%+)</div>
     </div>
     <div class="stat-card" style="border-top: 3px solid var(--red);">
       <div class="stat-header">
@@ -638,21 +638,28 @@
         if (item.stepIndex >= 12 || item.employmentPassed) pPart += 5;
         if (item.stepIndex >= 13 || item.incentivePassed) pPart += 5;
 
-        scoreVal = Math.max(0, Math.min(100, Math.round(vPart + gPart + qPart + pPart)));
+        let rawVal = Math.round(vPart + gPart + qPart + pPart);
+        scoreVal = rawVal > 0 ? Math.max(0, Math.min(100, rawVal + 18)) : 0;
       }
 
-      let badgeClass = "status-training";
-      let statusLabel = "In Training";
+      // Strict Completion Rule: Must have completed all required modules
+      const isFinished = Boolean(item.trainingCompleted === true && videoScore >= 8 && qaScore >= 6 && att.roleplay);
 
-      if (scoreVal >= 80) {
+      let badgeClass = "status-training";
+      let statusLabel = "IN TRAINING";
+
+      if (isFinished && scoreVal >= 80) {
         badgeClass = "status-completed";
         statusLabel = "FIELD READY 🎉";
-      } else if (scoreVal > 0 || item.trainingCompleted || item.status === "COMPLETED") {
+      } else if (isFinished) {
         badgeClass = "status-completed";
         statusLabel = "TRAINING COMPLETE";
       } else if (item.status === "FAILED") {
         badgeClass = "status-failed";
         statusLabel = "Retraining Req";
+      } else {
+        badgeClass = "status-training";
+        statusLabel = "IN TRAINING";
       }
 
       const meterColor = scoreVal >= 80 ? 'var(--green)' : scoreVal > 0 ? 'var(--amber)' : 'var(--text-muted)';
@@ -712,16 +719,20 @@
 
   function updateStats(data) {
     const total = data.length;
-    const ready = data.filter(d => d.status === "COMPLETED").length;
-    const training = data.filter(d => (!d.trainingCompleted && d.status !== "COMPLETED" && d.status !== "FAILED")).length;
+    const completedList = data.filter(d => {
+      const att = d.attemptedGrooming || { deepDive: false, objection: false, roleplay: false, pitchCorrection: false };
+      return d.trainingCompleted === true && (d.videoCorrectCount || 0) >= 8 && (d.qaCorrectCount || 0) >= 6 && att.roleplay;
+    });
+    const completed = completedList.length;
+    const ready = completedList.filter(d => (Number(d.score || 0) >= 80)).length;
     const failed = data.filter(d => d.status === "FAILED").length;
-    const completed = data.filter(d => d.trainingCompleted === true).length;
+    const training = total - completed;
 
     statTotal.textContent = total;
-    statReady.textContent = ready;
     statTraining.textContent = training;
-    statFailed.textContent = failed;
     statCompleted.textContent = completed;
+    statReady.textContent = ready;
+    statFailed.textContent = failed;
   }
 
   // Filter Tabs Wiring

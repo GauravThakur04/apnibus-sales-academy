@@ -314,26 +314,31 @@ function rowToCandidate(row) {
   const qScoreRaw = row.qa_score || `${row.qa_correct_count || 0}/6`;
   const vCount = parseInt(vQuizRaw.split('/')[0], 10) || Number(row.video_correct_count) || 0;
   const qCount = parseInt(qScoreRaw.split('/')[0], 10) || Number(row.qa_correct_count) || 0;
+  const att = safeParseJson(row.grooming_checklist || row.attempted_grooming, {});
+  const stepIdx = Number(row.step_index) || 0;
+
+  // Strict completion requirement: candidate must have finished all modules
+  const isFinished = Boolean(row.training_completed === true && vCount >= 8 && qCount >= 6 && att.roleplay);
 
   return {
     name: row.name,
     email: row.mail || row.email,
     location: row.location || 'Field',
-    status: row.status || (Number(row.readiness_score || row.score) >= 80 ? 'COMPLETED' : 'IN_TRAINING'),
+    status: isFinished ? 'COMPLETED' : 'IN_TRAINING',
     score: Number(row.readiness_score !== undefined ? row.readiness_score : row.score) || 0,
-    verdict: row.verdict || (Number(row.readiness_score || row.score) >= 80 ? 'FIELD READY 🎉' : 'IN TRAINING'),
-    trainingCompleted: Boolean(row.training_completed || row.status === 'COMPLETED' || Number(row.readiness_score || row.score) >= 80),
-    stepIndex: Number(row.step_index) || 0,
+    verdict: isFinished && Number(row.readiness_score || row.score) >= 80 ? 'FIELD READY 🎉' : 'IN TRAINING',
+    trainingCompleted: isFinished,
+    stepIndex: stepIdx,
     videoCorrectCount: vCount,
     qaCorrectCount: qCount,
     weakAreas: safeParseJson(row.weak_areas, []),
     choices: safeParseJson(row.choices, {}),
-    attemptedGrooming: safeParseJson(row.grooming_checklist || row.attempted_grooming, {}),
+    attemptedGrooming: att,
     qaChoices: safeParseJson(row.qa_choices, {}),
     messages: safeParseJson(row.messages, []),
     certificateId: row.certificate_id,
     certificateIssuedAt: row.last_update || row.created_at || row.updated_at,
-    updatedAt: row.last_update || row.updated_at || new Date().toISOString()
+    certificate: row.certificate
   };
 }
 
