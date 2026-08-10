@@ -666,25 +666,20 @@ function unlockVideoCompletion(vidId) {
     renderVList();
   }
 
+  const isMobile = window.innerWidth <= 1080;
   const vstage = document.querySelector(".vstage");
   const pptContainer = $("pptContainer");
 
-  if (vstage) {
-    vstage.classList.remove("video-mode");
-    vstage.classList.add("ppt-mode");
-    vstage.classList.add("show-slides");
-  }
   if (pptContainer) {
     pptContainer.classList.remove("hidden-ppt");
     pptContainer.style.display = "flex";
   }
 
-  // Sync mobile tab header buttons
-  const mTabVideo = $("mTabVideo");
-  const mTabSlides = $("mTabSlides");
-  if (mTabVideo && mTabSlides) {
-    mTabSlides.classList.add("active");
-    mTabVideo.classList.remove("active");
+  if (!isMobile) {
+    if (vstage) {
+      vstage.classList.remove("video-mode");
+      vstage.classList.remove("ppt-mode");
+    }
   }
 
   const doneBtn = $("doneBtn");
@@ -695,13 +690,8 @@ function unlockVideoCompletion(vidId) {
     doneBtn.textContent = "✓ 50%+ Watched! 📌 Please Review PPT Slides → Proceed to Questions";
   }
 
-  // Toast notice with explicit instruction to review PPT slides
-  toast("📌 Instruction: 50% video watched! Please make sure to review the Presentation Slides (PPT) as well.");
-
-  // Smooth scroll to PPT container
-  if (pptContainer) {
-    pptContainer.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
+  // Toast notice with instructions
+  toast("✓ 50%+ Watched! Video unlocked. Click 'View Slides' above or 'Proceed to Questions' when ready.");
 }
 
 function setVideoPlayerSource(src, vId) {
@@ -736,19 +726,36 @@ function showVideo(i) {
   const pptEmbedViewer = $("pptEmbedViewer");
   const done = state.watched.includes(v.id);
 
+  const isMobile = window.innerWidth <= 1080;
+
   if (!done) {
     if (vstage) {
       vstage.classList.add("video-mode");
       vstage.classList.remove("ppt-mode");
+      vstage.classList.remove("show-slides");
     }
     if (pptContainer) {
       pptContainer.classList.add("hidden-ppt");
       pptContainer.style.display = "none";
     }
   } else {
-    if (vstage) {
-      vstage.classList.remove("video-mode");
-      vstage.classList.add("ppt-mode");
+    if (isMobile) {
+      if (vstage) {
+        vstage.classList.add("video-mode");
+        vstage.classList.remove("ppt-mode");
+        vstage.classList.remove("show-slides");
+      }
+      const mTabVideo = $("mTabVideo");
+      const mTabSlides = $("mTabSlides");
+      if (mTabVideo && mTabSlides) {
+        mTabVideo.classList.add("active");
+        mTabSlides.classList.remove("active");
+      }
+    } else {
+      if (vstage) {
+        vstage.classList.remove("video-mode");
+        vstage.classList.remove("ppt-mode");
+      }
     }
     if (pptContainer) {
       pptContainer.classList.remove("hidden-ppt");

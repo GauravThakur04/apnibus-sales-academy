@@ -177,7 +177,12 @@ export async function saveCertificateRecord(candidate) {
 export async function getAllCandidates() {
   if (pool) {
     try {
-      const res = await pool.query('SELECT * FROM training_certificates ORDER BY last_update DESC');
+      const res = await pool.query(`
+        SELECT c.*, tc.training_completed, tc.step_index 
+        FROM training_certificates c 
+        LEFT JOIN training_candidates tc ON LOWER(c.mail) = LOWER(tc.email) 
+        ORDER BY c.last_update DESC
+      `);
       let candidates = res.rows.map(rowToCandidate);
 
       if (candidates.length === 0) {
@@ -316,17 +321,38 @@ function rowToCandidate(row) {
   const qCount = parseInt(qScoreRaw.split('/')[0], 10) || Number(row.qa_correct_count) || 0;
   const att = safeParseJson(row.grooming_checklist || row.attempted_grooming, {});
   const stepIdx = Number(row.step_index) || 0;
+  const scoreVal = Number(row.readiness_score !== undefined ? row.readiness_score : row.score) || 0;
 
-  // Strict completion requirement: candidate must have finished all modules
-  const isFinished = Boolean(row.training_completed === true && vCount >= 8 && qCount >= 6 && att.roleplay);
+  let isFinished = false;
+  let status = "IN_TRAINING";
+  let verdict = "IN TRAINING";
+
+  if (scoreVal < 56) {
+    isFinished = false;
+    status = "IN_TRAINING";
+    verdict = "IN TRAINING";
+  } else if (scoreVal >= 56 && scoreVal <= 75) {
+    isFinished = true;
+    status = "COMPLETED";
+    verdict = "TRAINING COMPLETED";
+  } else if (scoreVal >= 76) {
+    isFinished = true;
+    if (vCount === 8 && qCount > 2) {
+      status = "COMPLETED";
+      verdict = "FIELD READY 🎉";
+    } else {
+      status = "COMPLETED";
+      verdict = "TRAINING COMPLETED";
+    }
+  }
 
   return {
     name: row.name,
     email: row.mail || row.email,
     location: row.location || 'Field',
-    status: isFinished ? 'COMPLETED' : 'IN_TRAINING',
-    score: Number(row.readiness_score !== undefined ? row.readiness_score : row.score) || 0,
-    verdict: isFinished && Number(row.readiness_score || row.score) >= 80 ? 'FIELD READY 🎉' : 'IN TRAINING',
+    status: status,
+    score: scoreVal,
+    verdict: verdict,
     trainingCompleted: isFinished,
     stepIndex: stepIdx,
     videoCorrectCount: vCount,

@@ -2628,9 +2628,6 @@ app.post("/api/sync-state", async (req, res) => {
     const vScore = videoCorrectCount !== undefined ? videoCorrectCount : ((watchedVideosCount || 0) * 2);
     const qScore = qaCorrectCount !== undefined ? qaCorrectCount : calculatedQaScore;
     const groomAtt = attemptedGrooming || existing?.attemptedGrooming || {};
-    
-    // Strict completion definition: must have finished all modules
-    const isCompleted = Boolean((trainingCompleted === true || stepIndex >= 13) && vScore >= 8 && qScore >= 6 && groomAtt.roleplay);
 
     const existing = idx !== -1 ? data[idx] : null;
     const tempRecord = {
@@ -2638,15 +2635,35 @@ app.post("/api/sync-state", async (req, res) => {
       name,
       email: email || existing?.email || currentUser.email || "",
       stepIndex: stepIndex !== undefined ? stepIndex : (existing?.stepIndex || 0),
-      trainingCompleted: isCompleted,
       videoCorrectCount: vScore,
       qaCorrectCount: qScore,
       attemptedGrooming: groomAtt
     };
 
     let finalScore = calculateCandidateScore(tempRecord);
-    const recordStatus = isCompleted ? "COMPLETED" : "IN_TRAINING";
-    const recordVerdict = (isCompleted && finalScore >= 80) ? "FIELD READY 🎉" : "IN TRAINING";
+    
+    let isCompleted = false;
+    let recordStatus = "IN_TRAINING";
+    let recordVerdict = "IN TRAINING";
+
+    if (finalScore < 56) {
+      isCompleted = false;
+      recordStatus = "IN_TRAINING";
+      recordVerdict = "IN TRAINING";
+    } else if (finalScore >= 56 && finalScore <= 75) {
+      isCompleted = true;
+      recordStatus = "COMPLETED";
+      recordVerdict = "TRAINING COMPLETED";
+    } else if (finalScore >= 76) {
+      isCompleted = true;
+      if (vScore === 8 && qScore > 2) {
+        recordStatus = "COMPLETED";
+        recordVerdict = "FIELD READY 🎉";
+      } else {
+        recordStatus = "COMPLETED";
+        recordVerdict = "TRAINING COMPLETED";
+      }
+    }
 
     const record = {
       ...existing,
@@ -2766,13 +2783,58 @@ app.get("/api/download-certificate", async (req, res) => {
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
     })[char]);
     const safeName = escapeHtml(candidate.name);
-    const score = Math.round(Number(candidate.score) || 85);
+    const score = Math.round(Number(candidate.score) || 0);
     const issueDate = new Date(candidate.certificateIssuedAt || candidate.updatedAt || Date.now()).toLocaleDateString("en-GB", {
       day: "numeric", month: "long", year: "numeric"
     });
-    const certificate = ensureCertificate(candidate);
-    await saveCandidate(candidate);
-    const certificateId = certificate?.certificateId || ("CERT-AB-" + (candidate.name.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4) || 'BD') + "-" + Math.random().toString(36).substring(2, 8).toUpperCase());
+
+    const isCompleted = score >= 56;
+    let certificateId = candidate.certificateId;
+    if (isCompleted) {
+      const certificate = ensureCertificate(candidate);
+      await saveCandidate(candidate);
+      certificateId = certificate?.certificateId || candidate.certificateId;
+    }
+    if (!certificateId) {
+      certificateId = "CERT-AB-" + (candidate.name.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4) || 'BD') + "-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    }
+
+    let certTitle = "Certificate of Sales Readiness";
+    let officialText = "Official Sales Certification";
+    let certDescription = `has successfully completed the <b>6-Phase Sales Operations &amp; Field Readiness Training</b> on <b>ApniBus POS Ticketing Machine</b>, <b>Objection Handling (A-A-A-A Framework)</b>, <b>Operator Pitch Simulation</b>, and <b>Policy Compliance</b>.`;
+    let statusLabel = "FIELD READY 🎉";
+    let statusColor = "#10b981"; // green
+
+    if (score < 56) {
+      certTitle = "Certificate of Sales Training Progress";
+      officialText = "Active Training Progress Report";
+      certDescription = `is currently undergoing the <b>6-Phase Sales Operations &amp; Field Readiness Training</b> on <b>ApniBus POS Ticketing Machine</b>, <b>Objection Handling (A-A-A-A Framework)</b>, <b>Operator Pitch Simulation</b>, and <b>Policy Compliance</b>.`;
+      statusLabel = "IN TRAINING";
+      statusColor = "#f59e0b"; // orange
+    } else if (score >= 56 && score <= 75) {
+      certTitle = "Certificate of Training Completion";
+      officialText = "Training Completion Certification";
+      certDescription = `has completed the <b>6-Phase Sales Operations &amp; Field Readiness Training</b> on <b>ApniBus POS Ticketing Machine</b>, <b>Objection Handling (A-A-A-A Framework)</b>, <b>Operator Pitch Simulation</b>, and <b>Policy Compliance</b>.`;
+      statusLabel = "TRAINING COMPLETE";
+      statusColor = "#3b82f6"; // blue
+    } else if (score >= 76) {
+      const vScore = candidate.videoCorrectCount || 0;
+      const qScore = candidate.qaCorrectCount || 0;
+      if (vScore === 8 && qScore > 2) {
+        certTitle = "Certificate of Sales Readiness";
+        officialText = "Official Sales Certification";
+        certDescription = `has successfully completed the <b>6-Phase Sales Operations &amp; Field Readiness Training</b> on <b>ApniBus POS Ticketing Machine</b>, <b>Objection Handling (A-A-A-A Framework)</b>, <b>Operator Pitch Simulation</b>, and <b>Policy Compliance</b>.`;
+        statusLabel = "FIELD READY 🎉";
+        statusColor = "#10b981"; // green
+      } else {
+        certTitle = "Certificate of Training Completion";
+        officialText = "Training Completion Certification";
+        certDescription = `has completed the <b>6-Phase Sales Operations &amp; Field Readiness Training</b> on <b>ApniBus POS Ticketing Machine</b>, <b>Objection Handling (A-A-A-A Framework)</b>, <b>Operator Pitch Simulation</b>, and <b>Policy Compliance</b>.`;
+        statusLabel = "TRAINING COMPLETE";
+        statusColor = "#3b82f6"; // blue
+      }
+    }
+
     const filename = `apnibus_certificate_${String(candidate.name).replace(/[^a-z0-9]+/gi, "_").replace(/^_|_$/g, "") || "candidate"}.html`;
     const logoDataUri = `data:image/png;base64,${fs.readFileSync(path.join(__dirname, "public", "logo.png")).toString("base64")}`;
 
@@ -2782,7 +2844,7 @@ app.get("/api/download-certificate", async (req, res) => {
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ApniBus Certificate</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&family=Archivo:wght@600;700;800&display=swap" rel="stylesheet">
 <style>body{margin:0;min-height:100vh;background:#101726;font-family:'Mukta',sans-serif;color:#fff;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}.certificate{background:#101726;border:4px double #f0a227;border-radius:24px;padding:45px;max-width:820px;width:100%;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,.95);box-sizing:border-box}.header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(240,162,39,.3);padding-bottom:20px;margin-bottom:24px;flex-wrap:wrap;gap:10px}.brand{display:flex;align-items:center;gap:12px;text-align:left}.brand img{height:44px}.brand-name,.title,.candidate,.score,.status,.authority{font-family:'Archivo',sans-serif}.brand-name{font-weight:700;font-size:17px}.brand-sub,.label,.date{font-size:11.5px;color:#9ca3af}.cert-id{text-align:right}.cert-id span{display:block;font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;font-weight:700}.cert-id b{font-family:'Archivo',sans-serif;color:#f0a227;font-size:13px}.trophy{font-size:52px;margin-bottom:10px;filter:drop-shadow(0 4px 12px rgba(240,162,39,.5))}.title{font-size:28px;margin:0 0 6px;letter-spacing:1px;text-transform:uppercase}.official{color:#f0a227;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:0 0 22px}.label{font-size:14px;margin:0 0 8px}.candidate{font-size:34px;color:#10b981;margin:0 0 20px;border-bottom:2px dashed rgba(16,185,129,.4);display:inline-block;padding-bottom:6px}.description{color:#d1d5db;font-size:14.5px;line-height:1.7;max-width:660px;margin:0 auto 24px}.badges{display:flex;justify-content:center;gap:20px;margin-bottom:24px;flex-wrap:wrap}.badge{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);padding:10px 22px;border-radius:12px}.badge span{display:block;font-size:10.5px;color:#9ca3af;text-transform:uppercase;font-weight:700;letter-spacing:.5px}.score{font-size:24px;color:#10b981}.status{font-size:18px;color:#f0a227}.footer{display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid rgba(255,255,255,.12);padding-top:16px;margin-top:12px;gap:10px}.date{text-align:left;font-size:12px}.date small{display:block;font-size:10.5px;color:#6b7280;margin-top:3px}.authority{text-align:right;font-weight:700;font-size:14px}.authority span{display:block;font-family:'Mukta',sans-serif;font-size:12px;color:#10b981;font-weight:600}@media print{body{padding:0}.certificate{box-shadow:none;max-width:700px;padding:36px}}@media(max-width:640px){.certificate{padding:22px 16px;border-radius:14px}.title{font-size:18px}.candidate{font-size:24px}.badges,.footer{flex-direction:column;align-items:center}.footer .date,.authority{text-align:center}}</style></head>
-<body><main class="certificate"><div class="header"><div class="brand"><img src="${logoDataUri}" alt="ApniBus Logo"><div><div class="brand-name">ApniBus</div><div class="brand-sub">Field Sales Training Academy</div></div></div><div class="cert-id"><span>Certificate ID</span><b>${certificateId}</b></div></div><div class="trophy">🏆 📜 🥇</div><h1 class="title">Certificate of Sales Readiness</h1><p class="official">Official Sales Certification</p><p class="label">This is to certify that</p><h2 class="candidate">${safeName}</h2><p class="description">has successfully completed the <b>6-Phase Sales Operations &amp; Field Readiness Training</b> on <b>ApniBus POS Ticketing Machine</b>, <b>Objection Handling (A-A-A-A Framework)</b>, <b>Operator Pitch Simulation</b>, and <b>Policy Compliance</b>.</p><div class="badges"><div class="badge"><span>Readiness Score</span><b class="score">${score}%</b></div><div class="badge"><span>Status</span><b class="status">FIELD READY 🎉</b></div></div><div class="footer"><div class="date">Date: <b>${escapeHtml(issueDate)}</b><small>Certificate ID: ${certificateId}</small></div><div class="authority">VP of Sales &amp; Training<span>ApniBus Sales Academy</span></div></div></main></body></html>`);
+<body><main class="certificate"><div class="header"><div class="brand"><img src="${logoDataUri}" alt="ApniBus Logo"><div><div class="brand-name">ApniBus</div><div class="brand-sub">Field Sales Training Academy</div></div></div><div class="cert-id"><span>Certificate ID</span><b>${certificateId}</b></div></div><div class="trophy">🏆 📜 🥇</div><h1 class="title">${escapeHtml(certTitle)}</h1><p class="official">${escapeHtml(officialText)}</p><p class="label">This is to certify that</p><h2 class="candidate">${safeName}</h2><p class="description">${certDescription}</p><div class="badges"><div class="badge"><span>Readiness Score</span><b class="score">${score}%</b></div><div class="badge"><span>Status</span><b class="status" style="color: ${statusColor}">${statusLabel}</b></div></div><div class="footer"><div class="date">Date: <b>${escapeHtml(issueDate)}</b><small>Certificate ID: ${certificateId}</small></div><div class="authority">VP of Sales &amp; Training<span>ApniBus Sales Academy</span></div></div></main></body></html>`);
   } catch (err) {
     console.error("Error generating certificate:", err);
     res.status(500).send("Error generating certificate");

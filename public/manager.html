@@ -643,23 +643,23 @@
       }
 
       // Strict Completion Rule: Must have completed all required modules
-      const isFinished = Boolean(item.trainingCompleted === true && videoScore >= 8 && qaScore >= 6 && att.roleplay);
-
       let badgeClass = "status-training";
       let statusLabel = "IN TRAINING";
 
-      if (isFinished && scoreVal >= 80) {
-        badgeClass = "status-completed";
-        statusLabel = "FIELD READY 🎉";
-      } else if (isFinished) {
-        badgeClass = "status-completed";
-        statusLabel = "TRAINING COMPLETE";
-      } else if (item.status === "FAILED") {
-        badgeClass = "status-failed";
-        statusLabel = "Retraining Req";
-      } else {
+      if (scoreVal < 56) {
         badgeClass = "status-training";
         statusLabel = "IN TRAINING";
+      } else if (scoreVal >= 56 && scoreVal <= 75) {
+        badgeClass = "status-completed";
+        statusLabel = "TRAINING COMPLETE";
+      } else if (scoreVal >= 76) {
+        if (videoScore === 8 && qaScore > 2) {
+          badgeClass = "status-completed";
+          statusLabel = "FIELD READY 🎉";
+        } else {
+          badgeClass = "status-completed";
+          statusLabel = "TRAINING COMPLETE";
+        }
       }
 
       const meterColor = scoreVal >= 80 ? 'var(--green)' : scoreVal > 0 ? 'var(--amber)' : 'var(--text-muted)';
@@ -719,12 +719,13 @@
 
   function updateStats(data) {
     const total = data.length;
-    const completedList = data.filter(d => {
-      const att = d.attemptedGrooming || { deepDive: false, objection: false, roleplay: false, pitchCorrection: false };
-      return d.trainingCompleted === true && (d.videoCorrectCount || 0) >= 8 && (d.qaCorrectCount || 0) >= 6 && att.roleplay;
-    });
+    const completedList = data.filter(d => d.score >= 56);
     const completed = completedList.length;
-    const ready = completedList.filter(d => (Number(d.score || 0) >= 80)).length;
+    const ready = data.filter(d => {
+      const vScore = d.videoCorrectCount || 0;
+      const qScore = d.qaCorrectCount || 0;
+      return d.score >= 76 && vScore === 8 && qScore > 2;
+    }).length;
     const failed = data.filter(d => d.status === "FAILED").length;
     const training = total - completed;
 
