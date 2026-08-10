@@ -608,54 +608,24 @@ function renderVList() {
 
 
 function bindVideoRestrictions(videoElem, vId) {
-  if (!videoElem || !vId) return;
-  const isAlreadyWatched = state.watched.includes(vId);
+  if (!vId) return;
   const doneBtn = $("doneBtn");
+  const done = state.watched.includes(vId);
 
-  if (isAlreadyWatched) {
-    if (doneBtn) {
-      doneBtn.disabled = false;
-      doneBtn.classList.add("done");
-      doneBtn.textContent = "✓ 50%+ Watched! 📌 Please Review PPT Slides → Proceed to Questions";
-    }
-    return;
-  }
-
-  let maxTimeWatched = 0;
   if (doneBtn) {
-    doneBtn.disabled = true;
-    doneBtn.classList.remove("done");
-    doneBtn.textContent = "🔒 Watch at least 50% of video to unlock (0%/50%)";
+    doneBtn.disabled = false;
+    doneBtn.removeAttribute("disabled");
+    doneBtn.classList.toggle("done", done);
+    doneBtn.textContent = done 
+      ? "✓ Completed — rewatch anytime" 
+      : "I've watched this — ask me the questions";
   }
 
-  // Prevent seeking ahead of watched duration
-  videoElem.addEventListener("seeking", () => {
-    if (videoElem.currentTime > maxTimeWatched + 2 && !state.watched.includes(vId)) {
-      videoElem.currentTime = maxTimeWatched;
-      toast("⚠️ Please watch at least 50% of the video without skipping!");
-    }
-  });
-
-  videoElem.addEventListener("timeupdate", () => {
-    if (!videoElem.duration) return;
-    if (videoElem.currentTime > maxTimeWatched) {
-      maxTimeWatched = videoElem.currentTime;
-    }
-
-    const pct = Math.floor((videoElem.currentTime / videoElem.duration) * 100);
-    if (!state.watched.includes(vId)) {
-      if (doneBtn && doneBtn.disabled) {
-        doneBtn.textContent = `🔒 Watch at least 50% of video to unlock (${pct}%/50%)`;
-      }
-      if (pct >= 50 || videoElem.currentTime >= videoElem.duration / 2) {
-        unlockVideoCompletion(vId);
-      }
-    }
-  });
-
-  videoElem.addEventListener("ended", () => {
-    unlockVideoCompletion(vId);
-  });
+  if (videoElem) {
+    videoElem.addEventListener("ended", () => {
+      unlockVideoCompletion(vId);
+    });
+  }
 }
 
 function unlockVideoCompletion(vidId) {
@@ -666,32 +636,15 @@ function unlockVideoCompletion(vidId) {
     renderVList();
   }
 
-  const isMobile = window.innerWidth <= 1080;
-  const vstage = document.querySelector(".vstage");
-  const pptContainer = $("pptContainer");
-
-  if (pptContainer) {
-    pptContainer.classList.remove("hidden-ppt");
-    pptContainer.style.display = "flex";
-  }
-
-  if (!isMobile) {
-    if (vstage) {
-      vstage.classList.remove("video-mode");
-      vstage.classList.remove("ppt-mode");
-    }
-  }
-
   const doneBtn = $("doneBtn");
   if (doneBtn) {
     doneBtn.disabled = false;
     doneBtn.removeAttribute("disabled");
     doneBtn.classList.add("done");
-    doneBtn.textContent = "✓ 50%+ Watched! 📌 Please Review PPT Slides → Proceed to Questions";
+    doneBtn.textContent = "✓ Completed — rewatch anytime";
   }
 
-  // Toast notice with instructions
-  toast("✓ 50%+ Watched! Video unlocked. Click 'View Slides' above or 'Proceed to Questions' when ready.");
+  toast("✓ Video completed! Click below to proceed to the questions.");
 }
 
 function setVideoPlayerSource(src, vId) {
@@ -796,15 +749,11 @@ function showVideo(i) {
   const btn = $("doneBtn");
   if (btn) {
     btn.classList.toggle("done", done);
-    if (done) {
-      btn.disabled = false;
-      btn.removeAttribute("disabled");
-      btn.textContent = "✓ 50%+ Watched! 📌 Please Review PPT Slides → Proceed to Questions";
-    } else {
-      btn.disabled = true;
-      btn.setAttribute("disabled", "true");
-      btn.textContent = "🔒 Watch at least 50% of video to unlock (0%/50%)";
-    }
+    btn.disabled = false;
+    btn.removeAttribute("disabled");
+    btn.textContent = done 
+      ? "✓ Completed — rewatch anytime" 
+      : "I've watched this — ask me the questions";
   }
 
   // Track viewing status dynamically
@@ -843,10 +792,8 @@ $("doneBtn").onclick = () => {
   const v = VIDEOS[state.current];
   if (!v) return;
 
-  const btn = $("doneBtn");
-  if (btn.disabled || btn.getAttribute("disabled") !== null || !state.watched.includes(v.id)) {
-    toast("🔒 Please watch at least 50% of the video to unlock questions!");
-    return;
+  if (!state.watched.includes(v.id)) {
+    state.watched.push(v.id);
   }
 
   state.viewedVideo[v.id] = true;
@@ -927,8 +874,9 @@ function syncGates() {
 }
 
 function completeVideo(id) {
-  if (state.watched.includes(id)) return;
-  state.watched.push(id);
+  if (!state.watched.includes(id)) {
+    state.watched.push(id);
+  }
   state.pendingCheck = null;
   state.stepIndex = Math.max(state.stepIndex, state.watched.length);
   save();
